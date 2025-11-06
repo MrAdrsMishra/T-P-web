@@ -4,7 +4,7 @@ import { NavLink } from "react-router-dom";
 import { CgProfile } from "react-icons/cg";
 import { GraduationCap, Menu, MoonIcon, SunIcon } from "lucide-react";
 import ToggleSwitch from "../../component/ToggleSwitch";
-import Sidebar from "./Student_dashboard_pages/Sidebar";
+import Sidebar from "./student_dashboard_pages/Sidebar";
 import useAuthStore from "../../store/user-auth-store/useAuthStore";
 function Student_Dashboard() {
   const [isProfileOpen, setIsProfileOpen] = useState(false);
