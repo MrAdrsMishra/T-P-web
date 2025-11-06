@@ -6,7 +6,7 @@ export default defineConfig({
   server: {
     proxy: {
       "/api": {
-        target: "http://localhost:5000", // your backend
+        target: "https://t-p-app.onrender.com/", // your backend
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api/, ""),
       },
