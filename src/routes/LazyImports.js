@@ -4,7 +4,7 @@ import { lazy } from "react";
 export const AppLayout = lazy(() => import("../App.jsx"));
 export const Login = lazy(() => import("../pages/Landing Page/Login.jsx"));
 export const Signup = lazy(() => import("../pages/Landing Page/Signup.jsx"));
-export const ForgotPassword = lazy(() => import("../pages/Landing Page/forgotPassword.jsx"));
+export const ForgotPassword = lazy(() => import("../pages/Landing Page/ForgotPassword.jsx"));
 export const Contact = lazy(() => import("../pages/Landing Page/Contact.jsx"));
 export const About = lazy(() => import("../pages/Landing Page/About.jsx"));
 
