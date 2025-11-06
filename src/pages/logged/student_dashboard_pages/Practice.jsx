@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Play, BookOpen, Target, CheckCircle, XCircle, RotateCcw } from 'lucide-react';
-import { mockQuestions } from '../data/mockData';
+import { mockQuestions } from '../../../data/mockData';
 
 const Practice = () => {
   const [selectedCategory, setSelectedCategory] = useState('technical');

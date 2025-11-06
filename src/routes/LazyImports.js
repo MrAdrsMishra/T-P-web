@@ -24,6 +24,7 @@ export const PseudoCode = lazy(() => import("../pages/logged/student_dashboard_p
 export const CodeEditor = lazy(() => import("../pages/logged/student_dashboard_pages/CodeEditor.jsx"));
 export const TestHistory = lazy(() => import("../pages/logged/student_dashboard_pages/TestHistory.jsx"));
 export const TermsConditions = lazy(() => import("../pages/logged/student_dashboard_pages/TermsConditions.jsx"));
+export const Writex = lazy(() => import("../pages/logged/student_dashboard_pages/Writex.jsx"));
 // export const Writex = lazy(() => import("../pages/logged/student_dashboard_pages/test-components/Writex.jsx"));
 export const StartTest = lazy(() => import("../pages/logged/student_dashboard_pages/test-components/StartTest.jsx"));
 export const Student_Setting = lazy(()=>import("../pages/logged/student_dashboard_pages/Setting.jsx"))
