@@ -44,6 +44,7 @@ const initialState = {
 const registerAdmin = (set) => async (credentials) => {
   set({ isLoading: true, error: null });
   try {
+    console.log(api)
     const res = await api.post("/register-admin", credentials);
     set({ isLoading: false });
     return res;
