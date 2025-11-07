@@ -2,8 +2,8 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import axios from "axios";
 const api = axios.create({
-  baseURL: `${import.meta.env.VITE_API_BASE_URL}/user/auth`, // Using Vite's env variable format
-  withCredentials: true,
+    baseURL: `${import.meta.env.VITE_API_BASE_URL}/auth`,
+    withCredentials: true,
 });
 
 const initialState = {
