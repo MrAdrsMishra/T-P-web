@@ -4,7 +4,7 @@ import axios from "axios";
 import useAuthStore from "../user-auth-store/useAuthStore";
 
 const api = axios.create({
-  baseURL: `${import.meta.env.VITE_API_BASE_URL}/test`,
+  baseURL: `${import.meta.env.VITE_API_BASE_URL}/v1/test`,
   withCredentials: true,
 });
 const initialState = {
