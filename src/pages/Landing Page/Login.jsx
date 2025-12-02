@@ -48,6 +48,21 @@ const Login = () => {
             {error}
           </motion.div>
         )}
+          <motion.div
+            className="bg-neutral-100 text-neutral-400 p-3 rounded-md mb-4"
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+          >
+            <div  className="text-center text-gray-800 font-mono"> Visitng as Guest</div>
+            <div>
+              Email : example123@gmail.com <br />
+              password: Example@123
+            </div>
+            <div>
+              Email : student123@gmail.com <br />
+              password: 0177AL221001
+            </div>
+          </motion.div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
@@ -84,7 +99,8 @@ const Login = () => {
           <div className="flex justify-center items-center gap-2">
             <motion.button
               type="button"
-              className="px-3 py-1 border rounded text-sm flex items-center gap-1 hover:bg-gray-100 transition"
+              className={`px-3 py-1 border rounded text-sm flex items-center gap-1 transition
+                ${role=='admin'? 'bg-gray-400':'bg-gray-100'}`}
               onClick={() => setRole("admin")}
               whileHover={{ scale: 1.03 }}
               whileTap={{ scale: 0.97 }}
@@ -95,7 +111,8 @@ const Login = () => {
 
             <motion.button
               type="button"
-              className="px-3 py-1 border rounded text-sm flex items-center gap-1 hover:bg-gray-100 transition"
+              className={`px-3 py-1 border rounded text-sm flex items-center gap-1 transition
+                ${role=='student'? 'bg-gray-400':'bg-gray-100'}`}
               onClick={() => setRole("student")}
               whileHover={{ scale: 1.03 }}
               whileTap={{ scale: 0.97 }}

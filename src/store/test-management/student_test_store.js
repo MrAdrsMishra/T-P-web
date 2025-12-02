@@ -3,9 +3,8 @@ import { persist } from "zustand/middleware";
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: `${import.meta.env.VITE_API_BASE_URL}/test`,
+  baseURL: `${import.meta.env.VITE_API_BASE_URL}/v1/test`,
   withCredentials: true,
-  Authorization: `Bearer ${user?.accessToken}`,
 });
 
 const initialState = {
