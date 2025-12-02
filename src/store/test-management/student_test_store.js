@@ -5,7 +5,7 @@ import useAuthStore from "../user-auth-store/useAuthStore";
 import { useNavigate } from "react-router-dom";
 
 const api = axios.create({
-  baseURL: "/api/v1/user/test",
+  baseURL: "/api/v1/test",
   withCredentials: true,
   Authorization: `Bearer ${user?.accessToken}`,
 });

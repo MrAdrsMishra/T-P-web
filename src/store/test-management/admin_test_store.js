@@ -4,7 +4,7 @@ import axios from "axios";
 import useAuthStore from "../user-auth-store/useAuthStore";
 
 const api = axios.create({
-  baseURL: "/api/v1/user/test",
+  baseURL: "/api/v1/test",
   withCredentials: true,
 });
 
