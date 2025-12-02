@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import React, { useState } from "react";
 import Editor from "@monaco-editor/react";
 import { Play, Save, Download, Upload, Settings } from "lucide-react";
@@ -98,13 +99,45 @@ const CodeEditor = () => {
           column1, column2
       ORDER BY 
           count DESC;`,
+=======
+import React, { useRef, useState } from "react";
+import AceEditor from "react-ace";
+
+// Modes
+import "ace-builds/src-noconflict/mode-java";
+
+// Themes (you MUST import each one you want to use)
+import "ace-builds/src-noconflict/theme-monokai";
+import "ace-builds/src-noconflict/theme-cobalt";
+import "ace-builds/src-noconflict/theme-eclipse";
+import "ace-builds/src-noconflict/theme-github";
+import "ace-builds/src-noconflict/theme-chrome";
+
+import "ace-builds/src-noconflict/ext-language_tools";
+
+const CodeEditor = () => {
+  const editorRef = useRef(null);
+
+  const aceThemes = {
+    // Dark
+    Monokai: "monokai",
+    Cobalt: "cobalt",
+    Eclipse: "eclipse",
+
+    // Light
+    GitHub: "github",
+    Chrome: "chrome",
+>>>>>>> dev
   };
 
-  const handleLanguageChange = (newLanguage) => {
-    setLanguage(newLanguage);
-    setCode(codeTemplates[newLanguage] || "");
+  const [theme, setTheme] = useState("monokai");
+
+  const switchAceTheme = (newTheme) => {
+    setTheme(newTheme);
+    console.log(`Theme switched to: ${newTheme}`);
   };
 
+<<<<<<< HEAD
   const runCode = () => {
     setIsRunning(true);
     setOutput("Running code...\n");
@@ -142,23 +175,13 @@ const CodeEditor = () => {
       reader.readAsText(file);
     }
   };
+=======
+>>>>>>> dev
   return (
-    <div className="h-screen flex flex-col px-2 pb-2 space-y-1 box-border">
-      {/* Toolbar */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center space-x-3">
-          <select
-            value={language}
-            onChange={(e) => handleLanguageChange(e.target.value)}
-            className="px-2 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-500 focus:border-transparent"
-          >
-            {languages.map((lang) => (
-              <option key={lang.value} value={lang.value}>
-                {lang.label}
-              </option>
-            ))}
-          </select>
+    <div className="mx-auto w-full h-full">
+      <h3>Ace Code Editor</h3>
 
+<<<<<<< HEAD
           <select
             value={theme}
             onChange={(e) => setTheme(e.target.value)}
@@ -261,6 +284,37 @@ const CodeEditor = () => {
             </pre>
           </div>
         </div>
+=======
+      {/* Theme Selector */}
+      <select
+        value={theme}
+        onChange={(e) => switchAceTheme(e.target.value)}
+        style={{ marginBottom: "10px" }}
+      >
+        {Object.entries(aceThemes).map(([label, value]) => (
+          <option key={value} value={value}>
+            {label}
+          </option>
+        ))}
+      </select>
+      <div className="w-full h-full border border-gray-500">
+        <AceEditor
+          ref={editorRef}
+          mode="java"
+          theme={theme}
+          onChange={(v) => console.log("change", v)}
+          name="UNIQUE_ID_OF_DIV"
+          width="70%"
+          height="100%"
+          // editorProps={{ $blockScrolling: true }}
+          setOptions={{
+            enableBasicAutocompletion: true,
+            enableLiveAutocompletion: true,
+            enableSnippets: true,
+            wrap: true,
+          }}
+        />
+>>>>>>> dev
       </div>
     </div>
   );

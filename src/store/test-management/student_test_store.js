@@ -1,13 +1,11 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import axios from "axios";
-import useAuthStore from "../user-auth-store/useAuthStore";
-import { useNavigate } from "react-router-dom";
 
 const api = axios.create({
-  baseURL: "/api/v1/test",
+ 
+  baseURL: `${import.meta.env.VITE_API_BASE_URL}/v1/test`,
   withCredentials: true,
-  Authorization: `Bearer ${user?.accessToken}`,
 });
 
 const initialState = {

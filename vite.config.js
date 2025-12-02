@@ -5,10 +5,13 @@ export default defineConfig({
   plugins: [react()],
   server: {
     proxy: {
-      "/api": {
-        target: "http://localhost:5000", // your backend
+      // Proxy frontend calls that start with /encounter/api to the backend
+      // and rewrite the path to match backend routes (prefix /v1/user)
+      '/api': {
+        target: 'http://localhost:5000',
         changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/api/,""),
+        // secure: false,
+        rewrite: (path) => path.replace(/^\/api/, ""),
       },
     },
   },
