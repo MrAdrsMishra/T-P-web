@@ -1,10 +1,9 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import axios from "axios";
-
 const api = axios.create({
-  baseURL: "/api/v1/user/auth", // Proxy via Vite
-  withCredentials: true,
+    baseURL: `${import.meta.env.VITE_API_BASE_URL}/auth`,
+    withCredentials: true,
 });
 
 const initialState = {
