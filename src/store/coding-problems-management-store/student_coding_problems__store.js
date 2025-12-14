@@ -6,17 +6,12 @@ const api = axios.create({
   baseURL: `${import.meta.env.VITE_API_BASE_URL}/v1/practice`,
 });
 
-axios.interceptors.response.use(
-  (response) => {
-    // Support both shapes:
-    // 1) Standard ApiResponse wrapper: { statusCode, data: {...}, message }
-    //    -> response.data?.data
-    // 2) Direct payload (e.g. { output, error, command })
-    //    -> response.data
-    return response.data?.data ?? response.data;
-  },
-  (error) => Promise.reject(error)
-);
+// axios.interceptors.response.use(
+//   (response) => {
+//     return response.data?.data ?? response.data;
+//   },
+//   (error) => Promise.reject(error)
+// );
 
 const aceThemes = {
   Monokai: "monokai",
@@ -39,14 +34,12 @@ const Languages = [
   { value: "go", label: "GO" },
 ];
 const codeTemplates = {
-  javascript: 
-`function main() {
+  javascript: `function main() {
   console.log("Hello, World!");
 }
 main();`,
 
-  python: 
-`def main():
+  python: `def main():
     print("Hello, World!")
 
 if __name__ == "__main__":
@@ -118,16 +111,22 @@ GROUP BY
     column1,
     column2
 ORDER BY
-    count DESC;`
+    count DESC;`,
 };
 
-
 const initialState = {
-  output: null,
-  code: null,
-  error: null,
-  language: "cpp",
+  success: null,
+  language: null,
   isRunning: false,
+  code:null,
+  data: {
+    status: null,
+    output: null,
+    stderr: null,
+    compile_output: null,
+    time: null,
+    memory: null,
+  },
   problem: {
     problemStatement: null,
     inputExamples: {
@@ -139,22 +138,45 @@ const initialState = {
     notes: [],
   },
 };
-
 const checkCode = (set, get) => async (codeDataObj) => {
   set({ isRunning: true });
-   try {
-    console.log(codeDataObj)
-    const result = await api.post("/run-code", codeDataObj);
-    // result may be the raw payload or an object containing .output
-    let resultOutput = result?.data?.output
-    // console.log('run result:', resultOutput)
-    set({ output:  resultOutput, isRunning: false });
+  try {
+    const response = await api.post("/run-code", codeDataObj);
+
+    const payload = response.data;
+
+    set({
+      success: payload.success,
+      language: payload.language,
+      data: {
+        status: payload.data.status,
+        output: payload.data.stdout,
+        stderr: payload.data.stderr,
+        compile_output: payload.data.compile_output,
+        time: payload.data.time,
+        memory: payload.data.memory,
+      },
+      isRunning: false,
+    });
   } catch (error) {
-    // Try to extract useful error info
-    const errPayload = error?.response?.data ?? error?.message ?? String(error);
-    set({ error: errPayload, isRunning: false });
+    set({
+      success: false,
+      isRunning: false,
+      data: {
+        status: "Error",
+        output: null,
+        stderr:
+          error?.response?.data?.message ||
+          error?.message ||
+          "Execution failed",
+        compile_output: null,
+        time: null,
+        memory: null,
+      },
+    });
   }
 };
+
 const studentCodingProblemStore = create(
   persist(
     (set, get) => ({
@@ -162,7 +184,7 @@ const studentCodingProblemStore = create(
       aceThemes,
       Languages,
       codeTemplates,
-      checkCode: checkCode(set,get)
+      checkCode: checkCode(set, get),
     }),
     {
       name: "student-coding-data",
