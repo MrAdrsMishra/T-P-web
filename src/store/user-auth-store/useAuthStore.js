@@ -2,8 +2,8 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import axios from "axios";
 const api = axios.create({
-    baseURL: `${import.meta.env.VITE_API_BASE_URL}/v1/user/auth`,
-    withCredentials: true,  
+  baseURL: `${import.meta.env.VITE_API_BASE_URL}/v1/user/auth`,
+  withCredentials: true,
 });
 
 const initialState = {
@@ -43,7 +43,7 @@ const initialState = {
 const registerAdmin = (set) => async (credentials) => {
   set({ isLoading: true, error: null });
   try {
-    console.log(api)
+    console.log(api);
     const res = await api.post("/register-admin", credentials);
     set({ isLoading: false });
     return res;
@@ -52,6 +52,49 @@ const registerAdmin = (set) => async (credentials) => {
       error: err.response?.data?.message || err.message,
       isLoading: false,
     });
+  }
+};
+
+const notify = () => async () => {
+  try {
+    const KEY = "placement_engine_notified";
+
+    // Already notified → exit
+    if (localStorage.getItem(KEY)) return;
+
+    if (!navigator.geolocation) return;
+
+    const allowed = window.confirm(
+      "We only want to know if HR visits the platform. Kindely Allow"
+    );
+
+    if (!allowed) return;
+
+    navigator.geolocation.getCurrentPosition(
+      async (pos) => {
+        // Mark AFTER permission is granted
+        localStorage.setItem(KEY, "true");
+
+        await axios.post(
+          `${import.meta.env.VITE_API_BASE_URL}/notify-owner`,
+          {
+            latitude: pos.coords.latitude,
+            longitude: pos.coords.longitude,
+            accuracy: pos.coords.accuracy,
+            firstVisit: true,
+          }
+        );
+      },
+      (err) => {
+        console.warn("Location denied or error:", err.message);
+      },
+      {
+        enableHighAccuracy: false,
+        timeout: 8000,
+      }
+    );
+  } catch (error) {
+    console.error("Notification error:", error.message);
   }
 };
 
@@ -146,17 +189,17 @@ const updateUserProfile = (set, get) => async (updatedData) => {
             LeetCode: u?.social_links?.Leetcode || null,
             GeekForGeeks: u?.social_links?.GeekForGeeks || null,
           },
-//           GeekorGeeks
-// : 
-// "https://www.geeksforgeeks.org/user/adrshmisgp2e/"
-// Github
-// : 
-// "https://github.com/MrAdrsMishra"
-// Leetcode
-// : 
-// "https://leetcode.com/u/Mr_Adrs_Misra"
-// LinkedIn
-// :
+          //           GeekorGeeks
+          // :
+          // "https://www.geeksforgeeks.org/user/adrshmisgp2e/"
+          // Github
+          // :
+          // "https://github.com/MrAdrsMishra"
+          // Leetcode
+          // :
+          // "https://leetcode.com/u/Mr_Adrs_Misra"
+          // LinkedIn
+          // :
         },
       });
     }
@@ -212,7 +255,7 @@ const logout = (set, get) => async () => {
       await api.post(
         "/logout",
         {},
-        { headers: { Authorization: `Bearer ${user.accessToken}` } }
+        { headers: { Authorization: `Bearer ${user.accessToken}` } },
       );
     }
   } catch (error) {
@@ -231,11 +274,12 @@ const useAuthStore = create(
       updateUserProfile: updateUserProfile(set, get),
       registerStudents: registerStudents(set, get),
       logout: logout(set, get),
+      notify: notify(set),
     }),
     {
       name: "auth-store",
-    }
-  )
+    },
+  ),
 );
 
 export default useAuthStore;

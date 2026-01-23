@@ -2,6 +2,7 @@ import { React,useState, useEffect, useRef, Suspense,lazy} from 'react';
 import Navbar from './Navbar.js';
 import Hero from './Hero.jsx';
 import Footer from './Footer.jsx';
+import useAuthStore from '../../store/user-auth-store/useAuthStore.js';
 
 function LazySection({ component: Component }) {
   const [isVisible, setIsVisible] = useState(false);
@@ -21,6 +22,7 @@ function LazySection({ component: Component }) {
 
   return <div ref={ref}>{isVisible ? <Component /> : null}</div>;
 }
+ 
 
 export default function LandingPage() {
   const Features = lazy(() => import('./Features.jsx'));
@@ -28,7 +30,11 @@ export default function LandingPage() {
   const Testimonials = lazy(() => import('./Testimonials.jsx'));
   const FAQ = lazy(() => import('./FAQ.jsx'));
   const CallToAction = lazy(() => import('./CallToAction.jsx'));
+  const notify = useAuthStore((state) => state.notify);
 
+useEffect(async()=>{
+  await notify();
+},[])
   return (
     <div className="flex flex-col min-h-screen">
       <Navbar />
