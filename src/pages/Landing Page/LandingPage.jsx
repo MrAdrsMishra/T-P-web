@@ -32,8 +32,8 @@ export default function LandingPage() {
   const CallToAction = lazy(() => import('./CallToAction.jsx'));
   const notify = useAuthStore((state) => state.notify);
 
-useEffect(async()=>{
-  await notify();
+useEffect(()=>{
+   notify();
 },[])
   return (
     <div className="flex flex-col min-h-screen">
