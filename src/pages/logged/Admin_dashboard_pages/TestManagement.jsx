@@ -10,68 +10,12 @@ import {
 } from "lucide-react";
 import CreateTestPage from "./CreateTestPage";
 import CreateProblems from "./CreateProblems";
- 
+import { tests, TEST_STATUS, STATUS_BADGES, TEST_CATEGORIES } from '../../../constant.js';
 const TestManagement = () => {
   const [activeTab, setActiveTab] = useState("all");
   const [showPage, setShowPage] = useState("0");
 
-  const tests = [
-    {
-      id: 1,
-      title: "Advanced JavaScript Concepts",
-      category: "coding",
-      duration: 120,
-      participants: 45,
-      status: "active",
-      difficulty: "Hard",
-      createdDate: "2024-01-15",
-      questions: 25,
-    },
-    {
-      id: 2,
-      title: "Logical Reasoning Assessment",
-      category: "aptitude",
-      duration: 90,
-      participants: 32,
-      status: "draft",
-      difficulty: "Medium",
-      createdDate: "2024-01-12",
-      questions: 40,
-    },
-    {
-      id: 3,
-      title: "English Communication Skills",
-      category: "verbal",
-      duration: 60,
-      participants: 28,
-      status: "completed",
-      difficulty: "Easy",
-      createdDate: "2024-01-10",
-      questions: 30,
-    },
-    {
-      id: 4,
-      title: "Data Structures & Algorithms",
-      category: "coding",
-      duration: 150,
-      participants: 52,
-      status: "active",
-      difficulty: "Hard",
-      createdDate: "2024-01-08",
-      questions: 20,
-    },
-    {
-      id: 5,
-      title: "Quantitative Aptitude",
-      category: "aptitude",
-      duration: 75,
-      participants: 38,
-      status: "scheduled",
-      difficulty: "Medium",
-      createdDate: "2024-01-05",
-      questions: 35,
-    },
-  ];
+ 
   const filteredTests =
     activeTab === "all"
       ? tests
@@ -93,13 +37,7 @@ const TestManagement = () => {
   };
 
   const getStatusBadge = (status) => {
-    const statusClasses = {
-      active: "bg-green-100 text-green-700",
-      draft: "bg-yellow-100 text-yellow-700",
-      completed: "bg-blue-100 text-blue-700",
-      scheduled: "bg-orange-100 text-orange-700",
-    };
-    return statusClasses[status] || "bg-gray-100 text-gray-700";
+    return STATUS_BADGES[status] || "bg-gray-100 text-gray-700";
   };
 
   const getCategoryColor = (category) => {

@@ -13,8 +13,8 @@ const data = [
 
 const SubjectAnalysis = () => {
   return (
-    <div style={{ width: '100%', maxWidth: 300, height: 300 }}>
-      <h3 className='text-center text-lg font-sans font-normal text-black '>Percentage destribution</h3>
+    <div style={{ width: '100%', height: 300 }} className="flex flex-col">
+      <h3 className='text-center text-sm md:text-lg font-sans font-normal text-black'>Percentage distribution</h3>
       <ResponsiveContainer width="100%" height="100%">
         <RadarChart outerRadius="80%" data={data} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
           <PolarGrid />

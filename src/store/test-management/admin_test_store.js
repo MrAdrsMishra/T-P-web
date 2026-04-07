@@ -1,67 +1,67 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import axios from "axios";
+import { adminService } from "../../services/api.service.js";
 import useAuthStore from "../user-auth-store/useAuthStore";
 
-const api = axios.create({
- 
-  baseURL: `${import.meta.env.VITE_API_BASE_URL}/v1/test`,
-  withCredentials: true,
-});
 const initialState = {
-  testData: [],
+  TestMetaData: {},
   isLoading: false,
   error: null,
 };
 
-const withAuth = () => {
-  const user = useAuthStore.getState().user;
-  return {
-    headers: {
-      Authorization: `Bearer ${user?.accessToken}`,
-    },
-  };
-};
 const createTest = (set) => async (testData) => {
   console.log("In admin test store create test", testData);
   try {
-    set({ isLoading: false, error: null });
-    const response = await api.post(
-      "/admin/create-test",
-      {testData},
-      withAuth
-    );
-    if (response.status == 200) {
+    set({ isLoading: true, error: null });
+    const token = useAuthStore.getState().user?.accessToken;
+    const response = await adminService.createTest(testData, token);
+    if (response.status === 200) {
       set({ isLoading: false, error: null });
     }
     return response;  
   } catch (error) {
-    set({isLoading:false, error:error.response?.data?.message|| error.message})
+    set({ isLoading: false, error: error.response?.data?.message || error.message });
   }
 };
+
 const createProblemSet = (set) => async (problemSet) => {
- try {
-    set({ isLoading: false, error: null });
-    const response = await api.post(
-      "/admin/create-problem-set",
-      problemSet,
-      withAuth
-    );
-    if (response.status == 200) {
+  try {
+    set({ isLoading: true, error: null });
+    const token = useAuthStore.getState().user?.accessToken;
+    const response = await adminService.createProblemSet(problemSet, token);
+    if (response.status === 200) {
       set({ isLoading: false, error: null });
     }
     return response;
   } catch (error) {
-    set({isLoading:false, error:error.response?.data?.message|| error.message})
+    set({ isLoading: false, error: error.response?.data?.message || error.message });
   }
 };
+
+const getProblemSet = (set) => async () => {
+  try {
+    set({ isLoading: true, error: null });
+    const token = useAuthStore.getState().user?.accessToken;
+    const response = await adminService.getProblemSet(token);
+    if (response.status === 200) {
+      set({ TestMetaData: response.data.data });
+    }
+    return response;
+  } catch (error) {
+    set({ isLoading: false, error: error.response?.data?.message || error.message });
+  }
+};
+
 const useAdminTestStore = create(
   persist((set, get) => ({
+    ...initialState,
     createTest: createTest(set),
     createProblemSet: createProblemSet(set),
+    getProblemSet: getProblemSet(set),
   })),
   {
     name: "admin-test-store",
   }
 );
+
 export default useAdminTestStore;

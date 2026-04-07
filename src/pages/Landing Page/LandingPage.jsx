@@ -30,11 +30,11 @@ export default function LandingPage() {
   const Testimonials = lazy(() => import('./Testimonials.jsx'));
   const FAQ = lazy(() => import('./FAQ.jsx'));
   const CallToAction = lazy(() => import('./CallToAction.jsx'));
-  const notify = useAuthStore((state) => state.notify);
+  // const notify = useAuthStore((state) => state.notify);
 
-useEffect(()=>{
-   notify();
-},[])
+// useEffect(()=>{
+//   //  notify();
+// },[])
   return (
     <div className="flex flex-col min-h-screen">
       <Navbar />

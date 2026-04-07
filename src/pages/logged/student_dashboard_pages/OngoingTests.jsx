@@ -17,11 +17,13 @@ const OngoingTests = () => {
 
   // ✅ FIXED destructuring — no { } here
   const OngoingTestsInfo = useStudentTestStore(
-    (state) => state.OngoingTestsInfo
+    (state) => state.OngoingTestsInfo || []
   );
   const getAllOngoingTestsInfo = useStudentTestStore(
     (state) => state.getAllOngoingTestsInfo
   );
+  const isLoading = useStudentTestStore((state) => state.isLoading);
+  const error = useStudentTestStore((state) => state.error);
 
   const getTimeRemaining = (endDate) => {
     const now = new Date();
@@ -39,10 +41,10 @@ const OngoingTests = () => {
       const response = await getAllOngoingTestsInfo();
     };
     call();
-  }, []);
+  }, [getAllOngoingTestsInfo]);
   const handleStartTest = (test) => {
     setSelectedTest(test);
-    navigate(`/test/start-test?testId=${test._id}`, { replace: true });
+    navigate(`/test/start-test?testId=${test.testId}`, { replace: true });
   };
 
   return (
@@ -50,11 +52,36 @@ const OngoingTests = () => {
       <div className="flex items-center justify-between">
         <h1 className="text-xl font-semibold text-gray-800">Ongoing Tests</h1>
         <div className="text-sm text-gray-600">
-          {OngoingTestsInfo?.length || 0} active tests
+          {Array.isArray(OngoingTestsInfo) ? OngoingTestsInfo.length : 0} active tests
         </div>
       </div>
 
+      {/* Loading State */}
+      {isLoading && (
+        <div className="flex items-center justify-center py-12">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-sky-400 mx-auto mb-4"></div>
+            <p className="text-gray-600">Loading ongoing tests...</p>
+          </div>
+        </div>
+      )}
+
+      {/* Error State */}
+      {error && !isLoading && (
+        <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+          <p className="text-red-600">{error}</p>
+        </div>
+      )}
+
+      {/* Empty State */}
+      {!isLoading && !error && (!Array.isArray(OngoingTestsInfo) || OngoingTestsInfo.length === 0) && (
+        <div className="text-center py-12">
+          <p className="text-gray-600">No ongoing tests available</p>
+        </div>
+      )}
+
       {/* Active Tests Grid */}
+      {!isLoading && Array.isArray(OngoingTestsInfo) && OngoingTestsInfo.length > 0 && (
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
         {OngoingTestsInfo.map((test, idx) => (
           <div
@@ -73,11 +100,11 @@ const OngoingTests = () => {
             <div className="space-y-1 mb-4">
               <div className="flex items-center text-sm text-gray-600">
                 <Clock className="w-4 h-4 mr-2" />
-                <span>{test.duration} minutes</span>
+                <span>{test.duration || 30} minutes</span>
               </div>
               <div className="flex items-center text-sm text-gray-600">
                 <BookOpen className="w-4 h-4 mr-2" />
-                <span>{test.total_questions} questions</span>
+                <span>{test.forBranch?.join(", ") || "All branches"}</span>
               </div>
               <div className="flex items-center text-sm text-gray-600">
                 <Users className="w-4 h-4 mr-2" />
@@ -86,8 +113,8 @@ const OngoingTests = () => {
               <div className="flex items-center text-sm text-gray-600">
                 <Calendar className="w-4 h-4 mr-2" />
                 <span>
-                  Ends: {format(test.valid_till, "MMM dd, yyyy")} •{" "}
-                  {getTimeRemaining(test.valid_till)}
+                  Ends: {format(new Date(test.validTill), "MMM dd, yyyy")} •{" "}
+                  {getTimeRemaining(test.validTill)}
                 </span>
               </div>
             </div>
@@ -102,6 +129,7 @@ const OngoingTests = () => {
           </div>
         ))}
       </div>
+      )}
     </div>
   );
 };

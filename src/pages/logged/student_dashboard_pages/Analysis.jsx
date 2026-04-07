@@ -4,14 +4,14 @@ import ProgressOverTimeGraph from "../component/ProgressOverTimeGraph.jsx";
 import SubjectAnalysis from "../component/SubjectAnalysis.jsx";
 const Analysis = () => {
   return (
-    <div className="flex flex-col space-y-2 ">
+    <div className="flex flex-col space-y-4">
       <UserBLock />
       
-      <div id="row2" className="flex justify-between space-x-4">
-       <SubjectAnalysis />
+      <div id="row2" className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <SubjectAnalysis />
         <RankingTrendGraph />
       </div>
-      <div id="row3" className="flex justify-between space-x-4 ">
+      <div id="row3" className="grid grid-cols-1 gap-4">
         <ProgressOverTimeGraph />
       </div>
     </div>

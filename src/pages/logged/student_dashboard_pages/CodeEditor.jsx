@@ -1,495 +1,356 @@
-// import React, { useRef, useState, useEffect } from "react";
-// import AceEditor from "react-ace";
-// import "ace-builds/src-noconflict/mode-java";
-// import "ace-builds/src-noconflict/theme-monokai";
-// import "ace-builds/src-noconflict/theme-cobalt";
-// import "ace-builds/src-noconflict/theme-eclipse";
-// import "ace-builds/src-noconflict/theme-github";
-// import "ace-builds/src-noconflict/theme-chrome";
-// import "ace-builds/src-noconflict/ext-language_tools";
-// import { Play, Save, Download, Upload, Settings } from "lucide-react";
-// import studentCodingProblemStore from "../../../store/coding-problems-management-store/student_coding_problems__store";
-// const CodeEditor = () => {
-// const data = studentCodingProblemStore((state) => state.data);
-//   const success = studentCodingProblemStore((state)=>state.success)
-//   const isRunning = studentCodingProblemStore((state) => state.isRunning);
-//   const Languages = studentCodingProblemStore((state) => state.Languages);
-//   const codeTemplates = studentCodingProblemStore(
-//     (state) => state.codeTemplates
-//   );
-//   const aceThemes = studentCodingProblemStore((state) => state.aceThemes);
-//   const checkCode = studentCodingProblemStore((state) => state.checkCode);
-//   const [theme, setTheme] = useState("monokai");
-//   const [language, setLanguage] = useState("cpp");
-//   const [code, setCode] = useState("");
-//   const [rightWidth, setRightWidth] = useState(600); // initial width in px
-//   const resizerRef = useRef(null);
-//   const isDragging = useRef(false);
-//   const startX = useRef(0);
-//   const startWidth = useRef(0);
-//   useEffect(()=>{
-//     if(success){
+import { useEffect, useRef, useState } from "react";
+import Editor from "@monaco-editor/react";
+import { useCodeEditorStore } from "../../../store/coding-problems-management-store/CodeEditorStore.js";
 
-//     }
-//   })
-//   const runCode = async () => {
-//     // Use the store action to check/run code
-//     const codeDataObj = {
-//       selectedLanguage: language,
-//       userCode: code,
-//       userInput: "",
-//     };
-//     if (checkCode) await checkCode(codeDataObj);
-//      console.log(output)
-//   };
-//   const download = () => {
-//     const blob = new Blob([code], { type: "text/plain" });
-//     const url = URL.createObjectURL(blob);
-//     const a = document.createElement("a");
-//     a.href = url;
-//     a.download = `code.${language === "javascript" ? "js" : language}`;
-//     a.click();
-//     URL.revokeObjectURL(url);
-//   };
-//   const loadCode = (event) => {
-//     const file = event.target.files && event.target.files[0];
-//     if (file) {
-//       const reader = new FileReader();
-//       reader.onload = (e) => {
-//         const content = e.target.result;
-//         setCode(content);
-//       };
-//       reader.readAsText(file);
-//     }
-//   };
-//   const stopDragging = () => {
-//     isDragging.current = false;
-//     document.body.classList.remove("select-none");
-//   };
+function CodeEditor() {
+  const [rightPanelWidth, setRightPanelWidth] = useState(350);
+  const [isDragging, setIsDragging] = useState(false);
+  const [isCompactLayout, setIsCompactLayout] = useState(
+    () => window.innerWidth < 1100,
+  );
+  const layoutRef = useRef(null);
 
-//   const startDragging = (e) => {
-//     isDragging.current = true;
-
-//     startX.current = e.clientX; // starting mouse position
-//     startWidth.current = rightWidth; // starting width
-
-//     document.body.classList.add("select-none");
-//   };
-
-//   const onDrag = (e) => {
-//     if (!isDragging.current) return;
-
-//     const dx = e.clientX - startX.current; // how much mouse moved
-//     const newWidth = startWidth.current + dx; // apply movement
-
-//     const minWidth = 500;
-//     const maxWidth = 900;
-
-//     setRightWidth(Math.max(minWidth, Math.min(maxWidth, newWidth)));
-//   };
-//   useEffect(() => {
-//     if (codeTemplates && language) {
-//       setCode(codeTemplates[language]);
-//     }
-//   }, [language, codeTemplates]);
-//   useEffect(() => {
-//     window.addEventListener("mousemove", onDrag);
-//     window.addEventListener("mouseup", stopDragging);
-//     return () => {
-//       window.removeEventListener("mousemove", onDrag);
-//       window.removeEventListener("mouseup", stopDragging);
-//     };
-//   }, []);
-//   return (
-//     <div className="mx-auto w-full h-full">
-//       {/* Editor and Output */}
-//       <div className="flex flex-col h-full w-full min-h-full rounded-lg p-1">
-//         {/* customization layer */}
-//         <div className="py-2 w-full flex justify-between items-center">
-//           <div className="space-x-2">
-//             <select
-//               value={language}
-//               onChange={(e) => setLanguage(e.target.value)}
-//               className="min-w-16 min-h-8 bg-gray-200  outline-none rounded-md"
-//             >
-//               {Languages.map((item, index) => {
-//                 return (
-//                   <option value={item.value} key={index}>
-//                     {item.label}
-//                   </option>
-//                 );
-//               })}
-//             </select>
-//             <select
-//               value={theme} // <- current selected theme
-//               onChange={(e) => setTheme(e.target.value)} // <- update theme
-//               className="min-w-16 min-h-8 bg-gray-200 outline-none rounded-md"
-//             >
-//               {Object.entries(aceThemes).map(([label, value], index) => (
-//                 <option key={index} value={value}>
-//                   {label}
-//                 </option>
-//               ))}
-//             </select>
-//           </div>
-//           <div className="flex items-center space-x-2">
-//             <button
-//               onClick={runCode}
-//               disabled={isRunning}
-//               className="h-8 w-12 flex items-center justify-center text-white bg-gray-200 border rounded-lg disabled:bg-green-400 transition-colors"
-//             >
-//               {isRunning ? "..." : <Play color="gray" className="w-4 h-4" />}
-//             </button>
-
-//             <button
-//               onClick={download}
-//               className="h-8 w-12 flex items-center justify-center text-white bg-gray-200 border rounded-lg transition-colors"
-//             >
-//               <Save color="gray" className="w-4 h-4" />
-//             </button>
-
-//             <label className="flex items-center space-x-2 px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors cursor-pointer">
-//               <Upload className="w-4 h-4" />
-//               <input
-//                 type="file"
-//                 onChange={loadCode}
-//                 className="hidden"
-//                 accept=".js,.py,.java,.cpp,.c,.html,.css,.sql,.txt"
-//               />
-//             </label>
-
-//             <button className="p-2 text-gray-600 hover:text-gray-800 transition-colors">
-//               <Settings className="w-5 h-5" />
-//             </button>
-//             <button className="p-2 text-gray-600 hover:text-gray-800 transition-colors">
-//               <Download className="w-5 h-5" />
-//             </button>
-//           </div>
-//         </div>
-//         {/* writing layer */}
-//         <div className="flex-1 min-h-0 overflow-hidden border border-primary-500 rounded-md pb-4">
-//           <div className="flex w-full h-full relative">
-//             {/* Editor Panel (Resizable) */}
-//             <div
-//               style={{ width: rightWidth }}
-//               className="flex flex-col bg-white rounded-lg shadow-sm border border-gray-100 overflow-hidden"
-//             >
-//               <div className="flex items-center justify-between px-4 py-2 bg-gray-50 border-b border-gray-100">
-//                 <span className="text-sm font-medium text-gray-700">
-//                   Editor
-//                 </span>
-//                 <span className="text-xs text-gray-500">{language}</span>
-//               </div>
-//               <div className="flex-1 min-h-0">
-//                 <AceEditor
-//                   mode={language}
-//                   theme={theme}
-//                   onChange={(v) => setCode(v)}
-//                   value={code}
-//                   name="UNIQUE_ID_OF_DIV"
-//                   width="100%"
-//                   height="100%"
-//                   setOptions={{
-//                     enableBasicAutocompletion: true,
-//                     enableLiveAutocompletion: true,
-//                     enableSnippets: true,
-//                     displayIndentGuides:true,
-//                   }}
-//                 />
-//               </div>
-//             </div>
-
-//             {/* Resizer Bar (Between editor and output) */}
-//             <div
-//               ref={resizerRef}
-//               onMouseDown={startDragging}
-//               className="w-[2px] cursor-ew-resize bg-transparent hover:bg-blue-400 transition-colors"
-//             ></div>
-//             {/* Output Panel */}
-//             <div className="flex-1 flex flex-col bg-white rounded-lg shadow-sm border border-gray-100 overflow-hidden">
-//               <div className="flex items-center justify-between px-4 py-2 bg-gray-50 border-b border-gray-100">
-//                 <div className="flex items-center space-x-2">
-//                   <div className="w-4 h-4 text-gray-600">{"_/>"}</div>
-//                   <span className="text-sm font-medium text-gray-700">
-//                     Output
-//                   </span>
-//                 </div>
-//                 <button
-//                   onClick={() =>
-//                     studentCodingProblemStore.setState({ output: "" })
-//                   }
-//                   className="text-xs text-gray-500 hover:text-gray-700 transition-colors"
-//                 >
-//                   Clear
-//                 </button>
-//               </div>
-
-//               <div
-//                 className={`flex-1 min-h-0 overflow-auto p-4 font-mono text-sm border border-primary-200 ${
-//                   theme === "vs-dark"
-//                     ? "bg-gray-900 text-green-300"
-//                     : "bg-white text-green-600"
-//                 }`}
-//               >
-//                 <pre className="whitespace-pre-wrap">
-//                   {/* {output} */}
-//                   {output || "Output will appear here..."}
-//                 </pre>
-//               </div>
-//             </div>
-//           </div>
-//         </div>
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default CodeEditor;
-
-import React, { useRef, useState, useEffect } from "react";
-import AceEditor from "react-ace";
-import {
-  Play,
-  Save,
-  Download,
-  Upload,
-  Settings,
-} from "lucide-react";
-
-import studentCodingProblemStore from "../../../store/coding-problems-management-store/student_coding_problems__store";
-
-// Ace modes
-import "ace-builds/src-noconflict/mode-c_cpp";
-import "ace-builds/src-noconflict/mode-python";
-import "ace-builds/src-noconflict/mode-javascript";
-
-// Ace themes
-import "ace-builds/src-noconflict/theme-monokai";
-import "ace-builds/src-noconflict/theme-cobalt";
-import "ace-builds/src-noconflict/theme-eclipse";
-import "ace-builds/src-noconflict/theme-github";
-import "ace-builds/src-noconflict/theme-chrome";
-import "ace-builds/src-noconflict/ext-language_tools";
-
-const CodeEditor = () => {
-  /* ===================== STORE ===================== */
   const {
-    data,
-    success,
+    selectedLanguage,
+    openLanguages,
+    userCode,
+    userInput,
+    output,
+    executionTime,
+    memoryUsage,
     isRunning,
-    Languages,
-    codeTemplates,
-    aceThemes,
-    checkCode,
-  } = studentCodingProblemStore();
+    setLanguage,
+    closeLanguage,
+    setCode,
+    setUserInput,
+    runCode,
+    theme,
+    setTheme,
+  } = useCodeEditorStore();
 
-  /* ===================== LOCAL STATE ===================== */
-  const [theme, setTheme] = useState("monokai");
-  const [language, setLanguage] = useState("cpp");
-  const [code, setCode] = useState("");
+  // Monaco language mapping
+  const languageMap = {
+    c: "c",
+    cpp: "cpp",
+    python: "python",
+    javascript: "javascript",
+    typescript: "typescript",
+    go: "go",
+    golang: "go",
+    rust: "rust",
+    java: "java",
+    csharp: "csharp",
+    php: "php",
+    ruby: "ruby",
+    kotlin: "kotlin",
+    swift: "swift",
+    r: "r",
+    bash: "shell",
+  };
+  const IdeThemeMap = {
+    github: "vs-light",
+    dracula: "vs-dark",
+    monokai: "vs-dark",
+    solarized: "vs-light",
+    highcontrast: "hc-black",
+  };
 
-  /* ===================== RESIZER ===================== */
-  const [rightWidth, setRightWidth] = useState(600);
-  const isDragging = useRef(false);
-  const startX = useRef(0);
-  const startWidth = useRef(0);
+  const selectableLanguages = Object.keys(languageMap).filter(
+    (lang) => lang !== "golang",
+  );
 
-  /* ===================== EFFECTS ===================== */
+  const monacoLanguage = languageMap[selectedLanguage] || "javascript";
 
-  // Load template on language change
+  const fileNameMap = {
+    c: "code.c",
+    cpp: "code.cpp",
+    python: "code.py",
+    javascript: "code.js",
+    typescript: "code.ts",
+    go: "code.go",
+    golang: "code.go",
+    rust: "code.rs",
+    java: "code.java",
+    csharp: "code.cs",
+    php: "code.php",
+    ruby: "code.rb",
+    kotlin: "code.kt",
+    swift: "code.swift",
+    r: "code.r",
+    bash: "code.sh",
+  };
+
   useEffect(() => {
-    if (codeTemplates?.[language]) {
-      setCode(codeTemplates[language]);
-    }
-  }, [language, codeTemplates]);
-
-  // Resize handlers
-  useEffect(() => {
-    const onMouseMove = (e) => {
-      if (!isDragging.current) return;
-
-      const dx = e.clientX - startX.current;
-      const newWidth = startWidth.current + dx;
-
-      setRightWidth(Math.max(500, Math.min(900, newWidth)));
+    const onResize = () => {
+      setIsCompactLayout(window.innerWidth < 1100);
     };
 
-    const onMouseUp = () => {
-      isDragging.current = false;
-      document.body.classList.remove("select-none");
-    };
-
-    window.addEventListener("mousemove", onMouseMove);
-    window.addEventListener("mouseup", onMouseUp);
-
-    return () => {
-      window.removeEventListener("mousemove", onMouseMove);
-      window.removeEventListener("mouseup", onMouseUp);
-    };
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
   }, []);
 
-  /* ===================== ACTIONS ===================== */
+  useEffect(() => {
+    if (isCompactLayout) {
+      setIsDragging(false);
+    }
+  }, [isCompactLayout]);
 
-  const runCode = async () => {
-    await checkCode({
-      selectedLanguage: language,
-      userCode: code,
-      userInput: "",
-    });
-  };
+  // Theme-aware colors effect
+  useEffect(() => {
+    const themeColors = {
+      github: {
+        bg: "#f6f8fa",
+        text: "#24292e",
+        border: "#d0d7de",
+        panelBg: "#ffffff",
+        headerBg: "#f6f8fa",
+      },
+      dracula: {
+        bg: "#282a36",
+        text: "#f8f8f2",
+        border: "#44475a",
+        panelBg: "#282a36",
+        headerBg: "#21222c",
+      },
+      monokai: {
+        bg: "#272822",
+        text: "#f8f8f2",
+        border: "#49483e",
+        panelBg: "#272822",
+        headerBg: "#1e1f1c",
+      },
+      solarized: {
+        bg: "#fdf6e3",
+        text: "#657b83",
+        border: "#eee8d5",
+        panelBg: "#fdf6e3",
+        headerBg: "#eee8d5",
+      },
+      highcontrast: {
+        bg: "#000000",
+        text: "#eeb657ff",
+        border: "#ffffff",
+        panelBg: "#000000",
+        headerBg: "#463926ff",
+      },
+    };
 
-  const clearOutput = () => {
-    studentCodingProblemStore.setState({
-      data: null,
-      success: false,
-    });
-  };
+    const colors = themeColors[theme] || themeColors.github;
+    const root = document.documentElement;
+    root.style.setProperty("--bg-color", colors.bg);
+    root.style.setProperty("--text-color", colors.text);
+    root.style.setProperty("--border-color", colors.border);
+    root.style.setProperty("--panel-bg", colors.panelBg);
+    root.style.setProperty("--header-bg", colors.headerBg);
+  }, [theme]);
 
-  const downloadCode = () => {
-    const blob = new Blob([code], { type: "text/plain" });
-    const url = URL.createObjectURL(blob);
+  // Ctrl + Enter shortcut
+  useEffect(() => {
+    const shortcut = (e) => {
+      if (e.ctrlKey && e.key === "Enter") {
+        e.preventDefault();
+        runCode();
+      }
+    };
 
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `code.${language}`;
-    a.click();
+    window.addEventListener("keydown", shortcut);
+    return () => window.removeEventListener("keydown", shortcut);
+  }, [runCode]);
 
-    URL.revokeObjectURL(url);
-  };
+  // Drag logic
+  useEffect(() => {
+    if (!isDragging) return;
 
-  const loadCode = (e) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
+    const handleMouseMove = (e) => {
+      const container = layoutRef.current;
+      if (!container) return;
 
-    const reader = new FileReader();
-    reader.onload = (ev) => setCode(ev.target.result);
-    reader.readAsText(file);
-  };
+      const rect = container.getBoundingClientRect();
+      const newWidth = rect.right - e.clientX;
+      const min = 300;
+      const max = Math.max(min, Math.floor(rect.width * 0.55));
 
-  const startDragging = (e) => {
-    isDragging.current = true;
-    startX.current = e.clientX;
-    startWidth.current = rightWidth;
-    document.body.classList.add("select-none");
-  };
+      setRightPanelWidth(Math.max(min, Math.min(max, newWidth)));
+    };
 
-  /* ===================== HELPERS ===================== */
+    const handleMouseUp = () => {
+      setIsDragging(false);
+      document.body.style.cursor = "default";
+    };
 
-  const aceMode =
-    language === "cpp"
-      ? "c_cpp"
-      : language === "python"
-      ? "python"
-      : "javascript";
+    document.body.style.cursor = "col-resize";
+    document.addEventListener("mousemove", handleMouseMove);
+    document.addEventListener("mouseup", handleMouseUp);
 
-  const outputText =
-    data?.output ||
-    data?.stderr ||
-    data?.compile_output ||
-    "Output will appear here...";
-
-  /* ===================== UI ===================== */
+    return () => {
+      document.removeEventListener("mousemove", handleMouseMove);
+      document.removeEventListener("mouseup", handleMouseUp);
+    };
+  }, [isDragging]);
 
   return (
-    <div className="w-full h-full p-1">
-      {/* Toolbar */}
-      <div className="flex justify-between items-center py-2">
-        <div className="flex gap-2">
-          <select
-            value={language}
-            onChange={(e) => setLanguage(e.target.value)}
-            className="bg-gray-200 rounded-md px-2 py-1"
-          >
-            {Languages.map((l) => (
-              <option key={l.value} value={l.value}>
-                {l.label}
-              </option>
-            ))}
-          </select>
-
-          <select
-            value={theme}
-            onChange={(e) => setTheme(e.target.value)}
-            className="bg-gray-200 rounded-md px-2 py-1"
-          >
-            {Object.entries(aceThemes).map(([k, v]) => (
-              <option key={k} value={v}>
-                {k}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        <div className="flex gap-2">
-          <button
-            onClick={runCode}
-            disabled={isRunning}
-            className="h-8 w-12 flex items-center justify-center bg-gray-200 rounded-lg"
-          >
-            {isRunning ? "..." : <Play className="w-4 h-4" />}
-          </button>
-
-          <button
-            onClick={downloadCode}
-            className="h-8 w-12 flex items-center justify-center bg-gray-200 rounded-lg"
-          >
-            <Save className="w-4 h-4" />
-          </button>
-
-          <label className="h-8 w-12 flex items-center justify-center bg-gray-200 rounded-lg cursor-pointer">
-            <Upload className="w-4 h-4" />
-            <input
-              type="file"
-              className="hidden"
-              onChange={loadCode}
+    <div className="h-full w-full rounded-[1.75rem] border border-stone-200/80 bg-white/85 p-4 shadow-[0_22px_55px_rgba(120,53,15,0.1)] backdrop-blur sm:p-5">
+      <div
+        ref={layoutRef}
+        className={`flex h-full gap-4 ${isCompactLayout ? "flex-col" : ""}`}
+      >
+        {/* Editor Panel */}
+        <div className="flex-1 flex flex-col border border-(--border-color) rounded-xl overflow-hidden shadow-sm bg-(--panel-bg) transition-colors duration-200">
+          <div className="border-b border-(--border-color) bg-(--header-bg)">
+            <div className="flex items-center gap-1 overflow-x-auto px-2 py-2">
+              {openLanguages.map((lang) => {
+                const isActive = lang === selectedLanguage;
+                return (
+                  <button
+                    key={lang}
+                    onClick={() => setLanguage(lang)}
+                    className={`rounded-md border px-3 py-1.5 text-xs font-medium whitespace-nowrap transition-colors ${
+                      isActive
+                        ? "border-orange-500 bg-orange-100/70 text-orange-800"
+                        : "border-(--border-color) bg-white/50 opacity-80 hover:opacity-100"
+                    }`}
+                  >
+                    <span>{fileNameMap[lang] || `code.${lang}`}</span>
+                    <span
+                      role="button"
+                      aria-label={`Close ${fileNameMap[lang] || `code.${lang}`}`}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        closeLanguage(lang);
+                      }}
+                      className="ml-2 inline-flex h-4 w-4 items-center justify-center rounded text-[10px] leading-none opacity-70 hover:bg-black/10 hover:opacity-100"
+                    >
+                      x
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+          <div className="flex-1">
+            <Editor
+              height="100%"
+              width="100%"
+              language={monacoLanguage}
+              value={userCode}
+              theme={IdeThemeMap[theme] || "vs-dark"}
+              onChange={(value) => setCode(value || "")}
+              options={{
+                fontSize: 14,
+                minimap: { enabled: false },
+                automaticLayout: true,
+                padding: { top: 16 },
+                scrollBeyondLastLine: false,
+                lineNumbers: "on",
+                roundedSelection: true,
+              }}
             />
-          </label>
-
-          <Settings className="w-5 h-5 text-gray-600" />
-        </div>
-      </div>
-
-      {/* Editor + Output */}
-      <div className="flex h-[calc(100%-48px)] border rounded-lg overflow-hidden">
-        {/* Editor */}
-        <div style={{ width: rightWidth }}>
-          <AceEditor
-            mode={aceMode}
-            theme={theme}
-            value={code}
-            onChange={setCode}
-            width="100%"
-            height="100%"
-            setOptions={{
-              enableBasicAutocompletion: true,
-              enableLiveAutocompletion: true,
-              enableSnippets: true,
-            }}
-          />
+          </div>
         </div>
 
         {/* Resizer */}
-        <div
-          onMouseDown={startDragging}
-          className="w-[2px] cursor-ew-resize bg-gray-300"
-        />
+        {!isCompactLayout && (
+          <div
+            onMouseDown={() => setIsDragging(true)}
+            className="w-1 cursor-col-resize rounded-full bg-stone-200 transition-colors hover:bg-orange-400"
+          />
+        )}
 
-        {/* Output */}
-        <div className="flex-1 flex flex-col">
-          <div className="flex justify-between items-center px-4 py-2 bg-gray-100 border-b">
-            <span className="font-medium">Output</span>
-            <button onClick={clearOutput} className="text-xs">
-              Clear
-            </button>
+        {/* Right Panel */}
+        <div
+          style={{ width: isCompactLayout ? undefined : rightPanelWidth }}
+          className={`flex flex-col gap-4 overflow-hidden ${isCompactLayout ? "w-full" : ""}`}
+        >
+          {/* Controls and Input */}
+          <div className="flex flex-col border border-(--border-color) rounded-xl overflow-hidden shadow-sm bg-(--panel-bg) transition-colors duration-200">
+            {/* Toolbar */}
+            <div className="flex flex-wrap gap-2 p-3 border-b border-(--border-color) bg-(--header-bg) items-center justify-end">
+              <span className="mr-auto text-xs font-semibold uppercase tracking-[0.2em] opacity-60">
+                Run settings
+              </span>
+              <select
+                value={selectedLanguage}
+                onChange={(e) => setLanguage(e.target.value)}
+                className="bg-transparent border border-(--border-color) px-2 py-1 rounded text-xs outline-none focus:ring-1 focus:ring-blue-500"
+                aria-label="Select programming language"
+              >
+                {selectableLanguages.map((lang) => (
+                  <option key={lang} value={lang} className="text-black">
+                    {lang}
+                  </option>
+                ))}
+              </select>
+
+              <select
+                value={theme}
+                onChange={(e) => setTheme(e.target.value)}
+                className="bg-transparent border border-(--border-color) px-2 py-1 rounded text-xs outline-none focus:ring-1 focus:ring-blue-500"
+                aria-label="Select editor theme"
+              >
+                {Object.keys(IdeThemeMap).map((t) => (
+                  <option key={t} value={t} className="text-black">
+                    {t}
+                  </option>
+                ))}
+              </select>
+
+              <button
+                onClick={runCode}
+                disabled={isRunning}
+                className={`text-xs font-bold px-4 py-1.5 rounded transition shadow-sm ${
+                  isRunning
+                    ? "bg-gray-400 cursor-not-allowed"
+                    : "bg-green-600 hover:bg-green-700 text-white active:scale-95"
+                }`}
+              >
+                {isRunning ? "Running..." : "Run code"}
+              </button>
+            </div>
+
+            {/* Input Section */}
+            <div className="px-4 py-2 border-b border-(--border-color) text-xs font-semibold opacity-70 bg-(--header-bg)">
+              Stdin (Input)
+            </div>
+            <textarea
+              value={userInput}
+              onChange={(e) => setUserInput(e.target.value)}
+              placeholder="Enter program input here..."
+              className="w-full h-32 p-3 bg-transparent text-sm font-mono outline-none resize-none placeholder:opacity-40"
+            />
           </div>
 
-          <pre className="flex-1 p-4 overflow-auto bg-black text-green-400 text-sm">
-            {outputText}
-          </pre>
+          {/* Output Panel */}
+          <div className="flex items-center justify-between rounded-lg border border-(--border-color) bg-(--panel-bg) px-3 py-2 text-xs">
+            <span className="font-semibold opacity-70">Runtime metrics</span>
+            <div className="flex gap-4 items-center">
+              <span className="font-medium opacity-80">
+                Time: {executionTime || "..."}
+              </span>
+              <span className="font-medium opacity-80">
+                Mem: {memoryUsage || "..."}
+              </span>
+              {isRunning && (
+                <div className="h-2 w-2 rounded-full bg-orange-500 animate-pulse"></div>
+              )}
+            </div>
+          </div>
+
+          <div className="flex-1 flex flex-col border border-(--border-color) rounded-xl overflow-hidden shadow-sm bg-(--header-bg) text-(--text-color)">
+            <div className="px-4 py-2 border-b border-(--border-color) bg-(--header-bg) font-semibold text-xs flex justify-between items-center">
+              <span>Output</span>
+            </div>
+            <div className="flex-1 p-4 overflow-auto whitespace-pre-wrap font-mono text-sm selection:bg-orange-200/70">
+              {output || (
+                <span className="opacity-40 italic">
+                  Code output will appear here...
+                </span>
+              )}
+            </div>
+          </div>
         </div>
       </div>
     </div>
   );
-};
+}
 
 export default CodeEditor;

@@ -26,7 +26,7 @@ const navigate = useNavigate();
   };
 
   return (
-    <div className="w-screen h-screen flex justify-center items-center bg-gray-100">
+    <div className="w-full min-h-screen flex justify-center items-center bg-gray-100 p-4">
       <motion.div
         className="w-full max-w-md bg-white shadow-lg rounded-lg p-6 md:p-8"
         initial={{ opacity: 0, scale: 0.9 }}

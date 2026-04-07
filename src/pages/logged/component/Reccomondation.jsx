@@ -53,12 +53,13 @@ const Reccomondation = () => {
         {recommendationItems1.map((val, index) => (
           <div
             key={index}
-            className="w-64 h-44 bg-white border border-gray-300 rounded-lg shadow-sm p-5 flex-shrink-0 flex flex-col justify-between"
+            className="w-64 h-44 bg-white border border-sky-300 rounded-lg shadow-sm p-5 flex-shrink-0 flex flex-col justify-between"
           >
             {/* Top: Strong Line */}
             <div className="flex items-center justify-start text-primary-700 text-sm font-normal ">
-             <Brain size={14}
-             className="mr-2" /> {val.strongLine}
+             <Brain size={16}
+             className="mr-2 mb-4 items-center" />
+             <p className="flex items-center text-sky-300 text-center">{val.strongLine}</p>  
             </div>
 
             {/* Middle: Description */}
@@ -66,7 +67,7 @@ const Reccomondation = () => {
               {val.description}
             </p>
             {/* Bottom: Button */}
-            <button className="mt-4 px-4 py-1.5 border border-primary-500 text-primary-600 text-sm rounded-md hover:bg-primary-100">
+            <button className="mt-4 px-4 py-1.5 border border-sky-400 text-primary-600 text-sm rounded-md hover:bg-primary-100">
               Take test
             </button>
           </div>

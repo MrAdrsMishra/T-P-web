@@ -25,13 +25,6 @@ const menuItems = [
     children: [],
   },
   {
-    id: "performance",
-    label: "Performance Analytics",
-    icon: BarChart3,
-    directTo: "admin-dashboard/students-performances",
-    children: [],
-  },
-  {
     id: "tests",
     label: "Test Management",
     icon: FileText,

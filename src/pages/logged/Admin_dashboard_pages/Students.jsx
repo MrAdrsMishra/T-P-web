@@ -10,6 +10,7 @@ import {
   Calendar,
 } from "lucide-react";
 import useAuthStore from "../../../store/user-auth-store/useAuthStore";
+import { SAMPLE_STUDENTS, SUCCESS_MESSAGES } from "../../../constant";
 const SuccessPopup = ({ onClose }) => {
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center">
@@ -22,10 +23,10 @@ const SuccessPopup = ({ onClose }) => {
       {/* Popup Box */}
       <div className="relative bg-white p-6 rounded-xl shadow-lg z-[101] max-w-sm w-full text-center">
         <h2 className="text-lg font-semibold text-green-700">
-          ✅ Registration Successful!
+          ✅ {SUCCESS_MESSAGES.STUDENTS_REGISTERED}
         </h2>
         <p className="text-gray-600 mt-2">
-          Students have been registered successfully.
+          {SUCCESS_MESSAGES.STUDENTS_REGISTERED}
         </p>
         <button
           onClick={onClose}
@@ -46,68 +47,7 @@ const Students = () => {
     { fullName: "", email: "", enrollment: "" },
   ]);
 
-  const students = [
-    {
-      id: 1,
-      fullName: "Sarah Smith",
-      email: "sarah.smith@email.com",
-      phone: "+1 234-567-8901",
-      location: "New York, NY",
-      joinDate: "2024-01-15",
-      testsCompleted: 12,
-      avgScore: 95,
-      status: "active",
-      lastActive: "2 hours ago",
-    },
-    {
-      id: 2,
-      fullName: "Mike Johnson",
-      email: "mike.johnson@email.com",
-      phone: "+1 234-567-8902",
-      location: "Los Angeles, CA",
-      joinDate: "2024-01-12",
-      testsCompleted: 10,
-      avgScore: 92,
-      status: "active",
-      lastActive: "1 day ago",
-    },
-    {
-      id: 3,
-      fullName: "Emily Brown",
-      email: "emily.brown@email.com",
-      phone: "+1 234-567-8903",
-      location: "Chicago, IL",
-      joinDate: "2024-01-10",
-      testsCompleted: 8,
-      avgScore: 89,
-      status: "inactive",
-      lastActive: "1 week ago",
-    },
-    {
-      id: 4,
-      fullName: "John Doe",
-      email: "john.doe@email.com",
-      phone: "+1 234-567-8904",
-      location: "Houston, TX",
-      joinDate: "2024-01-08",
-      testsCompleted: 15,
-      avgScore: 85,
-      status: "active",
-      lastActive: "30 minutes ago",
-    },
-    {
-      id: 5,
-      fullName: "Alex Wilson",
-      email: "alex.wilson@email.com",
-      phone: "+1 234-567-8905",
-      location: "Phoenix, AZ",
-      joinDate: "2024-01-05",
-      testsCompleted: 9,
-      avgScore: 83,
-      status: "pending",
-      lastActive: "3 days ago",
-    },
-  ];
+  const students = SAMPLE_STUDENTS;
 
   const registerStudents = useAuthStore((state) => state.registerStudents);
   const { isLoading, error } = useAuthStore();

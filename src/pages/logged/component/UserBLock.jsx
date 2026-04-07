@@ -22,28 +22,28 @@ const UserBLock = () => {
   };
   const Photo = studentProfile.photo || userImage;
   return (
-    <div className="md:flex justify-around items-center py-4 px-8 bg-white rounded-lg shadow-sm border border-gray-100">
+    <div className="flex flex-col md:flex-row justify-around items-center py-4 px-4 md:px-8 bg-white rounded-lg shadow-sm border border-gray-100 gap-4">
       {/* Left Image Section */}
       <div
         id="left"
-        className="md:w-1/4 flex justify-center items-center mb-4 md:mb-0 md:pr-8 md:border-r border-primary-300"
+        className="w-full md:w-1/4 flex justify-center items-center md:border-r border-primary-300"
       >
         <img
           src={Photo}
           alt="user"
-          className="max-w-52 min-w-32 max-h-52 min-h-40 object-cover border rounded-xl"
+          className="w-32 h-32 md:w-40 md:h-40 lg:w-52 lg:h-52 object-cover border rounded-xl"
         />
       </div>
 
       {/* Right Info Section */}
-      <div className="w-full space-y-4">
+      <div className="w-full md:w-3/4 space-y-4">
         <div
           id="details"
-          className="flex space-x-6 justify-evenly text-md md:pl-8"
+          className="flex flex-wrap gap-2 md:gap-4 justify-center md:justify-start text-xs md:text-sm md:pl-8"
         >
           {Object.entries(social_Links).map(([key, val]) => (
-            <div key={key} className="flex space-x-2 justify-evenly">
-              <a href={val} className="border border-neutral-400 text-gray-800">
+            <div key={key} className="flex items-center">
+              <a href={val} className="border border-neutral-400 text-gray-800 px-2 py-1 rounded hover:bg-gray-100">
                 {key}
               </a>
             </div>
@@ -51,13 +51,13 @@ const UserBLock = () => {
         </div>
         <div
           id="details"
-          className="w-full flex justify-center"
+          className="w-full"
         >
-          <div className="w-full grid grid-cols-2 gap-x-6 gap-y-4 text-md md:pl-8">
+          <div className="w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-2 md:gap-4 text-xs md:text-sm md:pl-8">
             {Object.entries(info).map(([key, val]) => (
               <div key={key} className="flex justify-start space-x-2">
-                <span className="text-primary-600 font-medium">{key}:</span>
-                <span className="text-primary-500">{val}</span>
+                <span className="text-primary-600 font-medium truncate">{key}:</span>
+                <span className="text-primary-500 truncate">{val}</span>
               </div>
             ))}
           </div>

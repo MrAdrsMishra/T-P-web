@@ -402,10 +402,12 @@ const TestPage = ({ testId }) => {
   // fetch test data
   useEffect(() => {
     console.log("Fetching test data for testId: in startTestPage ", testId);
-    const getTestdata = async () => {
-      await getTestData(testId);
-    };
-    getTestdata();
+    if (testId) {
+      const getTestdata = async () => {
+        await getTestData(testId);
+      };
+      getTestdata();
+    }
   }, [testId]);
 
   // initialize timer after testData is fetched
@@ -479,18 +481,26 @@ const TestPage = ({ testId }) => {
         <p className="text-lg mb-4 text-gray-800">
           {currentQuestion.problemStatement}
         </p>
-        {currentQuestion.options.map((option, idx) => (
-          <div key={idx} className="flex items-center gap-2">
-            <input
-              type="radio"
-              name={`q-${currentQuestion._id}`}
-              value={option}
-              checked={answers[currentQuestion._id] === option}
-              onChange={handleOptionChange}
-            />
-            <label>{option}</label>
-          </div>
-        ))}
+        {currentQuestion.options?.map((option, idx) => {
+          // Handle both formats: string (old) or object with optionId (new)
+          const optionValue = typeof option === 'string' 
+            ? option 
+            : option?.optionId?.optionValue || option?.optionValue || '';
+          const optionKey = typeof option === 'string' ? option : option?.optionId?._id || idx;
+          
+          return (
+            <div key={idx} className="flex items-center gap-2">
+              <input
+                type="radio"
+                name={`q-${currentQuestion._id}`}
+                value={optionKey}
+                checked={answers[currentQuestion._id] === optionKey}
+                onChange={handleOptionChange}
+              />
+              <label>{optionValue}</label>
+            </div>
+          );
+        })}
 
         {/* buttons */}
         <div className="flex justify-end mt-6 space-x-6">

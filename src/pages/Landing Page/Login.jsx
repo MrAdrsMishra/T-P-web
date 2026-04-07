@@ -28,7 +28,7 @@ const Login = () => {
     }
   };
   return (
-    <div className="w-screen h-screen flex justify-center items-center bg-gray-100 overflow-auto">
+    <div className="w-full min-h-screen flex justify-center items-center bg-gray-100 p-4 overflow-auto">
       <motion.div
         className="w-full max-w-md bg-white shadow-lg rounded-lg p-6 md:p-8"
         initial={{ opacity: 0, scale: 0.9 }}
@@ -55,12 +55,12 @@ const Login = () => {
           >
             <div  className="text-center text-gray-800 font-mono"> Visitng as Guest</div>
             <div>
-              Email : example123@gmail.com <br />
-              password: Example@123
+              Email : admin1@placement.com <br />
+              password: Admin@123
             </div>
             <div>
-              Email : student123@gmail.com <br />
-              password: 0177AL221001
+              Email : student.1@placement.com <br />
+              password: Student@123
             </div>
           </motion.div>
 
@@ -159,61 +159,6 @@ const Login = () => {
             </motion.button>
           </div>
         </form>
-
-        <div className="mt-6">
-          <div className="relative">
-            <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-gray-300" />
-            </div>
-            <div className="relative flex justify-center text-sm">
-              <span className="px-2 bg-white text-gray-500">
-                or Sign in with
-              </span>
-            </div>
-          </div>
-
-          {/* <FaGithub /> */}
-          <div className="mt-4 grid grid-cols-2 gap-3">
-            <motion.button
-              type="button"
-              className="btn-outline text-xs flex items-center justify-around"
-              onClick={() => alert("want to login with Google")}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              <FcGoogle />
-              continue with google
-            </motion.button>
-            <motion.button
-              type="button"
-              className="btn-outline text-xs flex items-center justify-around"
-              onClick={() => alert("want to login with github")}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              <FaGithub /> continue with github
-            </motion.button>
-            <motion.button
-              type="button"
-              className="btn-outline text-xs flex items-center justify-around"
-              onClick={() => alert("want to login with twitter")}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              <FaXTwitter /> continue with twitter
-            </motion.button>
-            <motion.button
-              type="button"
-              className="btn-outline text-xs flex items-center justify-around"
-              onClick={() => alert("want to login with facebook")}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              <FaFacebookF /> continue with facebook
-            </motion.button>
-          </div>
-        </div>
-
         <div className="mt-6 text-center">
           <p className="text-sm text-gray-600">
             Don't have an account?{" "}

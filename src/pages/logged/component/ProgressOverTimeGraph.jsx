@@ -9,9 +9,6 @@ import {
   ResponsiveContainer,
   LineChart,
   Line,
-  PieChart,
-  Pie,
-  Cell,
 } from "recharts";
 import { mockStudents } from "../../../data/mockData";
 const ProgressOverTimeGraph = () => {

@@ -43,24 +43,38 @@ function Admin_Dashboard() {
   return (
     <div className="flex flex-col h-screen overflow-hidden">
       {/* Header (fixed top) */}
-
-      <Header />
+      <Header openBar={openBar} ToggleBar={ToggleBar} />
 
       {/* Main Content Area */}
-      <div className=" h-full flex justify-between space-x-1 bg-gray-200">
+      <div className="h-full flex justify-between bg-gray-200 overflow-hidden">
+        {/* Sidebar - Responsive */}
         <div
-          className="relative z-10 h-full hidden lg:block"
-          style={{ width: rightWidth }}
+          className={`absolute md:relative z-40 md:z-10 h-full md:flex flex-col transition-all duration-300 ${
+            openBar ? "left-0" : "-left-full md:left-0"
+          }`}
+          style={{ width: openBar ? "100%" : rightWidth }}
         >
-          <Sidebar />
+          <div className="flex-1 overflow-auto">
+            <Sidebar />
+          </div>
+          {/* Resizer - only visible on larger screens */}
           <div
             ref={resizerRef}
             onMouseDown={startDragging}
-            className="absolute top-0 right-0 w-[4px] h-full cursor-ew-resize bg-transparent hover:bg-blue-400 transition-colors"
+            className="hidden md:block absolute top-0 right-0 w-[4px] h-full cursor-ew-resize bg-transparent hover:bg-blue-400 transition-colors"
           />
         </div>
+
+        {/* Mobile Sidebar Overlay */}
+        {openBar && (
+          <div
+            className="md:hidden absolute inset-0 z-30 bg-black bg-opacity-50"
+            onClick={() => setOpenBar(false)}
+          />
+        )}
+
         {/* Scrollable Outlet */}
-        <main className="flex-1 bg-gray-50 p-4 overflow-auto">
+        <main className="flex-1 bg-gray-50 p-2 md:p-4 overflow-auto">
           <Outlet />
         </main>
       </div>

@@ -65,7 +65,7 @@ const SkillsSection = () => {
     <div className="space-y-2">
  
       <div className="flex items-center justify-between">
-        <h1 className="text-xl font-semibold text-gray-800">
+        <h1 className="text-xl font-semibold text-primary-600">
           You are possessing the skills{" "}
         </h1>
         <button

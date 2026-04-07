@@ -2,6 +2,7 @@ import React from "react";
 import { useEffect } from "react";
 import { useState } from "react";
 import useAdminTestStore from "../../../store/test-management/admin_test_store";
+import { SUBJECTS, SUCCESS_MESSAGES } from "../../../constant";
 
 const CreateProblems = ({ setShowPage }) => {
   const [problems, setProblems] = useState([{
@@ -39,7 +40,7 @@ const createProblemSet = useAdminTestStore((state) => state.createProblemSet);
     console.log("Problems added:", problems); 
     const response = await createProblemSet(problems);
     if(response.status==200){
-      alert("problems created successfully");
+      alert(SUCCESS_MESSAGES.PROBLEMS_CREATED);
       setShowPage("0");
     }
   }
@@ -61,19 +62,15 @@ const createProblemSet = useAdminTestStore((state) => state.createProblemSet);
                 <div className="flex flex-col space-y-2">
                   {/* // select subject */}
                   <select
-                  value={problems.subject}
+                  value={problems[idx].subject}
                   onChange={(e) =>
                     handleProblemChange(idx, "subject", e.target.value)
                   }
                   className="form-input">
-                    <option value="Select">Select</option>
-                    <option value="Aptitude">Aptitude</option>
-                    <option value="Fundamental">Fundamental</option>
-                    <option value=" Reasoning">Reasoning</option>
-                    <option value="Verbal">Verbal</option>
-                    <option value="Coding">Coding</option>
-                    <option value=" Writing">Writing</option>
-                    <option value="Listening">Listening</option>
+                    <option value="">Select Subject</option>
+                    {SUBJECTS.map((subject) => (
+                      <option key={subject} value={subject}>{subject}</option>
+                    ))}
                   </select>
                   <label className="text-sm font-medium text-gray-700">
                     Problem Statement

@@ -9,6 +9,7 @@ export default defineConfig({
       // and rewrite the path to match backend routes (prefix /v1/user)
       '/api': {
         target: 'http://localhost:5000',
+        // target: 'https://t-p.onrender.com/',
         changeOrigin: true,
         // secure: false,
         rewrite: (path) => path.replace(/^\/api/, ""),
