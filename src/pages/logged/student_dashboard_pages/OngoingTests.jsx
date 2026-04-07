@@ -39,10 +39,10 @@ const OngoingTests = () => {
       const response = await getAllOngoingTestsInfo();
     };
     call();
-  }, []);
+  }, [getAllOngoingTestsInfo]);
   const handleStartTest = (test) => {
     setSelectedTest(test);
-    navigate(`/test/start-test?testId=${test._id}`, { replace: true });
+    navigate(`/test/start-test?testId=${test.testId}`, { replace: true });
   };
 
   return (
@@ -73,11 +73,11 @@ const OngoingTests = () => {
             <div className="space-y-1 mb-4">
               <div className="flex items-center text-sm text-gray-600">
                 <Clock className="w-4 h-4 mr-2" />
-                <span>{test.duration} minutes</span>
+                <span>{test.duration || 30} minutes</span>
               </div>
               <div className="flex items-center text-sm text-gray-600">
                 <BookOpen className="w-4 h-4 mr-2" />
-                <span>{test.total_questions} questions</span>
+                <span>{test.questions?.length || 0} questions</span>
               </div>
               <div className="flex items-center text-sm text-gray-600">
                 <Users className="w-4 h-4 mr-2" />
@@ -86,8 +86,8 @@ const OngoingTests = () => {
               <div className="flex items-center text-sm text-gray-600">
                 <Calendar className="w-4 h-4 mr-2" />
                 <span>
-                  Ends: {format(test.valid_till, "MMM dd, yyyy")} •{" "}
-                  {getTimeRemaining(test.valid_till)}
+                  Ends: {format(new Date(test.validTill), "MMM dd, yyyy")} •{" "}
+                  {getTimeRemaining(test.validTill)}
                 </span>
               </div>
             </div>
