@@ -6,8 +6,8 @@ import {
   SubjectAnalysis,
 } from "@/shared";
 import { useAnalyticsStore } from "@/store/analytics-store/useAnalyticsStore";
-import { useAuthStore } from "@/store/user-auth-store/useAuthStore";
 import { useNavigate } from "react-router-dom";
+import useAuthStore from "../../../store/user-auth-store/useAuthStore";
 
 const Analysis = () => {
   const token = useAuthStore((state) => state.token);
