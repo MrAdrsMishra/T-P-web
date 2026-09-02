@@ -1,8 +1,9 @@
 import React, { useState } from "react";
 import { Plus, Edit, Trash2, Code, Users, Brain } from "lucide-react";
-import { mockSkills } from "../../../data/mockData.jsx";
+import { mockSkills } from "@/data/mockData";
+
 const SkillsSection = () => {
-  const [skills, setSkills] = useState(mockSkills);
+  const [skills, setSkills] = useState(mockSkills || []);
   const [isAddingSkill, setIsAddingSkill] = useState(false);
   const [newSkill, setNewSkill] = useState({
     name: "",
@@ -61,12 +62,12 @@ const SkillsSection = () => {
     acc[skill.category].push(skill);
     return acc;
   }, {});
+
   return (
-    <div className="space-y-2">
- 
+    <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h1 className="text-xl font-semibold text-primary-600">
-          You are possessing the skills{" "}
+        <h1 className="text-xl font-semibold text-gray-800">
+          Possessing Skills
         </h1>
         <button
           onClick={() => setIsAddingSkill(true)}
@@ -76,6 +77,7 @@ const SkillsSection = () => {
           <span>Add Skill</span>
         </button>
       </div>
+
       {/* Add Skill Modal */}
       {isAddingSkill && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
@@ -150,11 +152,12 @@ const SkillsSection = () => {
           </div>
         </div>
       )}
+
       {/* Skills by Category */}
       {Object.entries(groupedSkills).map(([category, categorySkills]) => (
         <div
           key={category}
-          className="bg-white p-6 rounded-lg shadow-sm border border-gray-100 w-auto "
+          className="bg-white p-6 rounded-lg shadow-sm border border-gray-100 w-auto"
         >
           <div className="flex items-center mb-4">
             {getCategoryIcon(category)}
@@ -170,9 +173,12 @@ const SkillsSection = () => {
             </span>
           </div>
 
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 ">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
             {categorySkills.map((skill) => (
-              <div key={skill.name} className="p-4 bg-gray-50 rounded-lg border border-primary-100 ">
+              <div
+                key={skill.name}
+                className="p-4 bg-gray-50 rounded-lg border border-primary-100"
+              >
                 <div className="flex items-center justify-between mb-2">
                   <h4 className="font-medium text-gray-800">{skill.name}</h4>
                   <div className="flex space-x-1">
@@ -213,7 +219,6 @@ const SkillsSection = () => {
           </div>
         </div>
       ))}
-      
     </div>
   );
 };

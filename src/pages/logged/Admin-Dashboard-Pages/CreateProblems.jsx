@@ -1,27 +1,34 @@
-import React from "react";
-import { useEffect } from "react";
-import { useState } from "react";
+import React, { useEffect, useState } from "react";
 import useAdminTestStore from "../../../store/test-management/admin_test_store";
-import { SUBJECTS, SUCCESS_MESSAGES } from "../../../constant";
+import { useAnalyticsStore } from "@/store/analytics-store/useAnalyticsStore";
+import { SUCCESS_MESSAGES } from "../../../constant";
 
 const CreateProblems = ({ setShowPage }) => {
+  const { flatMetrics, fetchMetricTree } = useAnalyticsStore();
+
+  useEffect(() => {
+    fetchMetricTree();
+  }, [fetchMetricTree]);
+
   const [problems, setProblems] = useState([{
-        subject: "",
-        problemStatement: "",
-        options: "",
-        correctOption: "",
-        allocatedMark: 0,
-      }]);
-const createProblemSet = useAdminTestStore((state) => state.createProblemSet);
+    metricId: "",
+    tags: "",
+    problemStatement: "",
+    options: "",
+    correctOption: "",
+    allocatedMark: 1,
+  }]);
+  const createProblemSet = useAdminTestStore((state) => state.createProblemSet);
 
   const addAnotherProblem = () => {
     const updatedProblems = [...problems];
     updatedProblems.push({
-      category: "",
+      metricId: "",
+      tags: "",
       problemStatement: "",
       options: "",
-      answer: "",
-      allocatedMark: 0,
+      correctOption: "",
+      allocatedMark: 1,
     });
     setProblems(updatedProblems);
   };
@@ -36,42 +43,63 @@ const createProblemSet = useAdminTestStore((state) => state.createProblemSet);
     setProblems(updatedProblems);
   };
   const handleAddProblems = async() => {
-    // Logic to handle adding problems (e.g., send to backend or update state)
-    console.log("Problems added:", problems); 
-    const response = await createProblemSet(problems);
-    if(response.status==200){
+    const formattedProblems = problems.map(p => {
+      const selectedMetric = flatMetrics.find(m => String(m._id) === String(p.metricId));
+      return {
+        ...p,
+        metrics: selectedMetric ? [{ metricId: selectedMetric._id, weight: 1.0 }] : [],
+        metricAncestors: selectedMetric ? [selectedMetric._id, ...(selectedMetric.ancestors || [])] : [],
+        tags: p.tags ? p.tags.split(",").map(t => t.trim().toLowerCase()) : [],
+      };
+    });
+    console.log("Problems added:", formattedProblems); 
+    const response = await createProblemSet(formattedProblems);
+    if(response?.status === 200){
       alert(SUCCESS_MESSAGES.PROBLEMS_CREATED);
       setShowPage("0");
     }
-  }
+  };
   return (
-    <div className="w-full felx">
+    <div className="w-full flex">
       <div className="bg-inherit w-full">
         {/* Header */}
         <div className="p-6 border-b border-gray-200">
           <h2 className="text-xl font-bold text-text-primary">
-            Create Problems
+            Create Problems (Bound to Dynamic Metrics)
           </h2>
         </div>
         {/* */}
         {problems.map((problem, idx) => (
-          <form className="space-y-2 p-4 mb-6 border border-gray-300 rounded-2xl shadow-sm bg-white">
+          <form key={idx} className="space-y-2 p-4 mb-6 border border-gray-300 rounded-2xl shadow-sm bg-white">
             {/* Problems Section */}
             <div className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="flex flex-col space-y-2">
-                  {/* // select subject */}
+                  {/* Select Metric */}
+                  <label className="text-sm font-medium text-gray-700">Target Metric Node</label>
                   <select
-                  value={problems[idx].subject}
-                  onChange={(e) =>
-                    handleProblemChange(idx, "subject", e.target.value)
-                  }
-                  className="form-input">
-                    <option value="">Select Subject</option>
-                    {SUBJECTS.map((subject) => (
-                      <option key={subject} value={subject}>{subject}</option>
+                    value={problems[idx].metricId}
+                    onChange={(e) =>
+                      handleProblemChange(idx, "metricId", e.target.value)
+                    }
+                    className="form-input"
+                  >
+                    <option value="">Select Metric / Topic / Skill</option>
+                    {flatMetrics.map((metric) => (
+                      <option key={metric._id} value={metric._id}>
+                        {metric.type} — {metric.name} ({metric.slug})
+                      </option>
                     ))}
                   </select>
+
+                  <label className="text-sm font-medium text-gray-700">Diagnostic Micro-Tags</label>
+                  <input
+                    type="text"
+                    className="form-input"
+                    placeholder="e.g. prepositions-of-time, conditionals"
+                    value={problems[idx].tags || ""}
+                    onChange={(e) => handleProblemChange(idx, "tags", e.target.value)}
+                  />
                   <label className="text-sm font-medium text-gray-700">
                     Problem Statement
                   </label>

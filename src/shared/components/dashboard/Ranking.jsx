@@ -20,14 +20,13 @@ const data = [
 
 const RankingTrendGraph = () => {
   return (
-    <div className=" w-full bg-white p-2 rounded-xl shadow">
-      <h2 className="text-center text-lg font-sans font-normal text-black ">
+    <div className="w-full bg-white p-2 rounded-xl shadow border border-gray-100">
+      <h2 className="text-center text-lg font-sans font-normal text-black my-2">
         Percentile Trend (College vs Batch vs Branch)
       </h2>
       <ResponsiveContainer width="100%" height={300}>
         <LineChart data={data} margin={{ right: 30 }}>
-          <CartesianGrid  strokeDasharray="5 3" horizontal={true} vertical={true} />
-          {/* XAxis hidden */}
+          <CartesianGrid strokeDasharray="5 3" horizontal={true} vertical={true} />
           <XAxis dataKey="month" />
           <YAxis domain={[10, 100]} tickFormatter={(tick) => `${tick}%`} />
           <Tooltip formatter={(value) => `${value}%`} />

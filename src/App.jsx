@@ -1,5 +1,5 @@
 import React from "react";
-import LandingPage from "./pages/Landing Page/LandingPage.jsx";
+import LandingPage from "./pages/Landing-Page/LandingPage.jsx";
 import { Suspense } from "react";
 function App() {
   return (

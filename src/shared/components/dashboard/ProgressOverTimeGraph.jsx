@@ -1,18 +1,17 @@
 import React from "react";
 import {
-  BarChart,
-  Bar,
+  LineChart,
+  Line,
   XAxis,
   YAxis,
   CartesianGrid,
   Tooltip,
   ResponsiveContainer,
-  LineChart,
-  Line,
 } from "recharts";
-import { mockStudents } from "../../../data/mockData";
+import { mockStudents } from "@/data/mockData";
+
 const ProgressOverTimeGraph = () => {
-  const currentStudent = mockStudents[0]; // Assuming current user
+  const currentStudent = mockStudents[0] || { overallScore: 85 };
   const progressData = [
     { month: "Sep", score: 20 },
     { month: "Oct", score: 45 },
@@ -20,6 +19,7 @@ const ProgressOverTimeGraph = () => {
     { month: "Dec", score: 82 },
     { month: "Jan", score: currentStudent.overallScore },
   ];
+
   return (
     <div className="w-full bg-white p-6 rounded-lg shadow-sm border border-gray-100">
       <h3 className="text-lg font-medium text-gray-800 mb-4">

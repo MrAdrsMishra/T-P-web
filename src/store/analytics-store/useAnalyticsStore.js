@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import { analyticsService, handleApiError } from '@/services/api.service';
+import { analyticsService, metricsService, handleApiError } from '@/services/api.service';
 
 /**
  * Analytics & Performance Store
@@ -8,6 +8,13 @@ import { analyticsService, handleApiError } from '@/services/api.service';
 export const useAnalyticsStore = create(
   persist(
     (set, get) => ({
+      metricTree: [],
+      flatMetrics: [],
+      selectedMetric: null,
+      hierarchicalPerformance: {},
+      leaderboardData: { rankings: [], total: 0, page: 1, limit: 20, totalPages: 0 },
+      tagDiagnostics: { weakTopics: [], strongTopics: [], averageTopics: [], allTags: [] },
+
       studentStats: {
         totalTests: 0,
         avgScore: 0,
@@ -36,6 +43,85 @@ export const useAnalyticsStore = create(
       isLoading: false,
       error: null,
       lastUpdated: null,
+
+      setSelectedMetric: (metric) => set({ selectedMetric: metric }),
+
+      // Fetch metric hierarchy tree
+      fetchMetricTree: async (token) => {
+        set({ isLoading: true, error: null });
+        try {
+          const response = await metricsService.getMetricTree(token);
+          const data = response.data?.data || {};
+          set({
+            metricTree: data.tree || [],
+            flatMetrics: data.flat || [],
+            isLoading: false,
+            lastUpdated: new Date(),
+          });
+          return data;
+        } catch (error) {
+          const { message } = handleApiError(error);
+          set({ error: message, isLoading: false });
+          return null;
+        }
+      },
+
+      // Fetch student tree performance
+      fetchHierarchicalPerformance: async (token) => {
+        set({ isLoading: true, error: null });
+        try {
+          const response = await analyticsService.getStudentTreePerformance(token);
+          const data = response.data?.data || {};
+          set({
+            hierarchicalPerformance: data.performanceMap || {},
+            isLoading: false,
+            lastUpdated: new Date(),
+          });
+          return data;
+        } catch (error) {
+          const { message } = handleApiError(error);
+          set({ error: message, isLoading: false });
+          return null;
+        }
+      },
+
+      // Fetch metric ranking snapshots
+      fetchMetricLeaderboard: async (params, token) => {
+        set({ isLoading: true, error: null });
+        try {
+          const response = await analyticsService.getMetricLeaderboard(params, token);
+          const data = response.data?.data || { rankings: [], total: 0, page: 1, limit: 20, totalPages: 0 };
+          set({
+            leaderboardData: data,
+            isLoading: false,
+            lastUpdated: new Date(),
+          });
+          return data;
+        } catch (error) {
+          const { message } = handleApiError(error);
+          set({ error: message, isLoading: false });
+          return null;
+        }
+      },
+
+      // Fetch tag diagnostics (weak/strong micro-topics)
+      fetchTagDiagnostics: async (metricId, token) => {
+        set({ isLoading: true, error: null });
+        try {
+          const response = await metricsService.getTagDiagnostics(metricId, token);
+          const data = response.data?.data || { weakTopics: [], strongTopics: [], averageTopics: [], allTags: [] };
+          set({
+            tagDiagnostics: data,
+            isLoading: false,
+            lastUpdated: new Date(),
+          });
+          return data;
+        } catch (error) {
+          const { message } = handleApiError(error);
+          set({ error: message, isLoading: false });
+          return null;
+        }
+      },
 
       // Fetch student stats
       fetchStudentStats: async (token) => {
@@ -168,12 +254,9 @@ export const useAnalyticsStore = create(
         set({ isLoading: true, error: null });
         try {
           await Promise.all([
-            get().fetchStudentStats(token),
-            get().fetchSubjectPerformance(token),
-            get().fetchPerformanceTrends(token),
-            get().fetchAccuracyMatrix(token),
-            get().fetchConsistencyMetrics(token),
-            get().fetchPersonalRanking(token),
+            get().fetchMetricTree(token),
+            get().fetchHierarchicalPerformance(token),
+            get().fetchTagDiagnostics(null, token),
           ]);
           set({ isLoading: false, lastUpdated: new Date() });
         } catch (error) {

@@ -1,18 +1,15 @@
 import React, { useState, useEffect } from "react";
 import useAdminTestStore from "../../../store/test-management/admin_test_store";
+import { useAnalyticsStore } from "@/store/analytics-store/useAnalyticsStore";
 
 const CreateTestPage = ({ setShowPage }) => {
-  const categories = [
-    "Aptitude",
-    "Reasoning",
-    "Verbal",
-    "Fundamentals",
-    "Coding",
-    "Writing",
-    "Listening",
-  ];
+  const { flatMetrics, fetchMetricTree } = useAnalyticsStore();
 
-  const [selectedCategories, setSelectedCategories] = useState([]);
+  useEffect(() => {
+    fetchMetricTree();
+  }, [fetchMetricTree]);
+
+  const [selectedMetricIds, setSelectedMetricIds] = useState([]);
   const [problemsByCategory, setProblemsByCategory] = useState({});
   const [testData, setTestData] = useState({
     title: "",
@@ -31,30 +28,30 @@ const CreateTestPage = ({ setShowPage }) => {
   useEffect(() => {
     setTestData((prev) => ({
       ...prev,
-      categories: selectedCategories,
+      categories: selectedMetricIds,
       problemsByCategory: problemsByCategory,
     }));
-  }, [selectedCategories, problemsByCategory]);
+  }, [selectedMetricIds, problemsByCategory]);
 
-  // Initialize problems for new selected categories
+  // Initialize problems for new selected categories/metrics
   useEffect(() => {
     const updatedProblems = { ...problemsByCategory };
-    selectedCategories.forEach((cat) => {
-      if (!updatedProblems[cat]) updatedProblems[cat] = [{}];
+    selectedMetricIds.forEach((mId) => {
+      if (!updatedProblems[mId]) updatedProblems[mId] = [{}];
     });
-    // Remove problems for unselected categories
-    Object.keys(updatedProblems).forEach((cat) => {
-      if (!selectedCategories.includes(cat)) delete updatedProblems[cat];
+    // Remove problems for unselected metrics
+    Object.keys(updatedProblems).forEach((mId) => {
+      if (!selectedMetricIds.includes(mId)) delete updatedProblems[mId];
     });
     setProblemsByCategory(updatedProblems);
-  }, [selectedCategories]);
+  }, [selectedMetricIds]);
 
   const handleCheckboxChange = (event) => {
     const { value, checked } = event.target;
     if (checked) {
-      setSelectedCategories((prev) => [...prev, value]);
+      setSelectedMetricIds((prev) => [...prev, value]);
     } else {
-      setSelectedCategories((prev) => prev.filter((item) => item !== value));
+      setSelectedMetricIds((prev) => prev.filter((item) => item !== value));
     }
   };
 
@@ -143,21 +140,23 @@ const CreateTestPage = ({ setShowPage }) => {
           </div>
           
           <div className="flex-col">
-            <label className="form-label">Categories</label>
-            {categories.map((category) => (
-              <label
-                key={category}
-                className="basis-1/4 inline-flex items-center space-x-2 mr-4 mb-2"
-              >
-                <input
-                  type="checkbox"
-                  value={category}
-                  checked={selectedCategories.includes(category)}
-                  onChange={handleCheckboxChange}
-                />
-                {category}
-              </label>
-            ))}
+            <label className="form-label">Dynamic Metrics & Domains</label>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-2 mt-2">
+              {flatMetrics.map((metric) => (
+                <label
+                  key={metric._id}
+                  className="inline-flex items-center space-x-2 bg-slate-50 p-2 rounded border border-slate-200 text-xs font-medium text-slate-800 hover:bg-sky-50 transition cursor-pointer"
+                >
+                  <input
+                    type="checkbox"
+                    value={metric._id}
+                    checked={selectedMetricIds.includes(metric._id)}
+                    onChange={handleCheckboxChange}
+                  />
+                  <span>{metric.name} ({metric.type})</span>
+                </label>
+              ))}
+            </div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

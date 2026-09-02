@@ -16,7 +16,7 @@ const router = createBrowserRouter([
 
   {
     path: ROUTES.STUDENT.ROOT,
-    element: withSuspense(Pages.Student_Dashboard),
+    element: withSuspense(Pages.StudentDashboard),
     children: [
       { index: true, element: withSuspense(Pages.Welcome) },
       { path: ROUTES.STUDENT.PRACTICE, element: withSuspense(Pages.Practice) },
@@ -44,7 +44,7 @@ const router = createBrowserRouter([
 
   {
     path: ROUTES.ADMIN.ROOT,
-    element: withSuspense(Pages.Admin_Dashboard),
+    element: withSuspense(Pages.AdminDashboard),
     children: [
       { index: true, element: withSuspense(Pages.Welcome) },
       { path: ROUTES.ADMIN.ADMIN_HOME, element: withSuspense(Pages.Admin_Home) },

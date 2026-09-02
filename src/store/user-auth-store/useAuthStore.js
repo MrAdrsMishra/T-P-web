@@ -198,8 +198,10 @@ const useAuthStore = create(
           if (token) {
             await authService.logout(token);
           }
+          return true;
         } catch (error) {
           console.error("Logout error:", error);
+          return true;
         } finally {
           set({ ...initialState });
         }

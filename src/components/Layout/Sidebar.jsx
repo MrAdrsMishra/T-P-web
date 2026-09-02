@@ -1,62 +1,10 @@
 import React, { useEffect, useState } from "react";
-import {
-  Home,
-  BarChart3,
-  FileText,
-  ChevronDown,
-  ChevronRight,
-  Settings,
-  Users,
-  MessageSquare,
-  ExternalLink,
-  GraduationCap,
-  X,
-} from "lucide-react";
-import Header from "./Header";
+import { ChevronDown, ChevronRight } from "lucide-react";
 import { NavLink } from "react-router-dom";
 
-// Menu data
-const menuItems = [
-  {
-    id: "dashboard",
-    label: "Dashboard",
-    icon: Home,
-    directTo: "admin-dashboard/dashboard",
-    children: [],
-  },
-  {
-    id: "tests",
-    label: "Test Management",
-    icon: FileText,
-    directTo: "admin-dashboard/test-management",
-    children: [],
-  },
-  {
-    id: "students",
-    label: "Manage Students",
-    icon: Users,
-    directTo: "admin-dashboard/manage-students",
-    children: [],
-  },
-  {
-    id: "queries",
-    label: "Messages",
-    icon: MessageSquare,
-    directTo: "admin-dashboard/students-queries",
-    children: [],
-  },
-  {
-    id: "resources",
-    label: "Resources",
-    icon: ExternalLink,
-    directTo: "admin-dashboard/resources",
-    children: [],
-  },
-   
-];
+const RenderItems = ({ items = [], openedOptions, handleClicked }) => {
+  if (!items || !Array.isArray(items)) return null;
 
-// Recursive renderer for menu items
-const RenderItems = ({ items, openedOptions, handleClicked }) => {
   return items.map((item) => {
     const Icon = item.icon;
     const hasChildren = item.children?.length > 0;
@@ -86,7 +34,9 @@ const RenderItems = ({ items, openedOptions, handleClicked }) => {
             to={`/${item.directTo}`}
             className={({ isActive }) =>
               `block ${
-                isActive ? "bg-primary-300 text-primary-900 font-semibold" : ""
+                isActive
+                  ? "bg-primary-300 text-primary-900 font-semibold"
+                  : ""
               } rounded-md`
             }
           >
@@ -110,20 +60,21 @@ const RenderItems = ({ items, openedOptions, handleClicked }) => {
   });
 };
 
-const Sidebar = ({ width }) => {
+const Sidebar = ({ renderList = [] }) => {
   const [openedOptions, setOpenedOptions] = useState({});
 
   useEffect(() => {
     const initialState = {};
     const collectIds = (items) => {
+      if (!items || !Array.isArray(items)) return;
       items.forEach((item) => {
         initialState[item.id] = false;
         if (item.children?.length > 0) collectIds(item.children);
       });
     };
-    collectIds(menuItems);
+    collectIds(renderList);
     setOpenedOptions(initialState);
-  }, []);
+  }, [renderList]);
 
   const handleClicked = (id) => {
     setOpenedOptions((prev) => ({
@@ -134,12 +85,12 @@ const Sidebar = ({ width }) => {
 
   return (
     <div
-      className={`fixed top-0 left-0 h-full bg-primary-100 border-r border-gray-200 z-50 transform transition-transform duration-300 ease-in-out 
-        lg:translate-x-0 lg:static lg:z-auto flex flex-col`}
+      className={`fixed top-0 left-0 py-4 h-full bg-primary-100 border-r border-gray-200 z-50 transform transition-transform duration-300 ease-in-out 
+      lg:translate-x-0 lg:static lg:z-auto flex flex-col`}
     >
       <div className="flex-1 overflow-y-auto px-6 py-4 space-y-2">
         <RenderItems
-          items={menuItems}
+          items={renderList}
           openedOptions={openedOptions}
           handleClicked={handleClicked}
         />

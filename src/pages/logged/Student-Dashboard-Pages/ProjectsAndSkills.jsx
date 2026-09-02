@@ -3,7 +3,7 @@ import { AiOutlinePlus, AiOutlineDelete, AiOutlineEdit, AiOutlineGithub, AiOutli
 import { MdDateRange, MdPeople } from 'react-icons/md'
 import { SiReact, SiNodedotjs, SiMongodb, SiTailwindcss } from 'react-icons/si'
 import useAuthStore from '../../../store/user-auth-store/useAuthStore';
-import Reccomondation from '../component/Reccomondation';
+import { Reccomondation } from '@/shared';
 import { useProjectsStore, useSkillsStore } from '../../../store/student-profile-store/useProfileStore.js';
 
 const ProjectsAndSkills = () => {

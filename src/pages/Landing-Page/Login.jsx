@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { FcGoogle } from "react-icons/fc";
-import { FaFacebookF, FaGithub } from "react-icons/fa";
+import { FaCopy, FaFacebookF, FaGithub } from "react-icons/fa";
 import { PiStudent } from "react-icons/pi";
 import { RiAdminFill } from "react-icons/ri";
 import { FaXTwitter } from "react-icons/fa6";
@@ -18,13 +18,12 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const result = await login({ email, password, role });
-    if (result?.status==200) {
+    if (result?.status == 200) {
       role == "admin"
-      ? navigate("/admin-dashboard/dashboard")
+        ? navigate("/admin-dashboard/dashboard")
         : navigate("/student-dashboard/analysis");
-    }
-    else{
-      alert("false")
+    } else {
+      alert("false");
     }
   };
   return (
@@ -48,21 +47,48 @@ const Login = () => {
             {error}
           </motion.div>
         )}
-          <motion.div
-            className="bg-neutral-100 text-neutral-400 p-3 rounded-md mb-4"
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-          >
-            <div  className="text-center text-gray-800 font-mono"> Visitng as Guest</div>
+        <motion.div
+          className="bg-neutral-100 text-neutral-400 p-3 rounded-md mb-4"
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+        >
+          <div className="text-center text-gray-800 font-mono">
+            {" "}
+            Visitng as Guest
+          </div>
+          {/* make them click to copy */}
+          <div className="flex justify-between items-center gap-2">
             <div>
               Email : admin1@placement.com <br />
               password: Admin@123
             </div>
+            <button
+              onClick={() => {
+                setEmail("admin1@placement.com");
+                setPassword("Admin@123");
+              }}
+            >
+              {/* copy icon */}
+              <FaCopy className="text-base" />
+            </button>
+          </div>
+          {/* make them click to copy */}
+          <div className="flex justify-between items-center gap-2">
             <div>
               Email : student.1@placement.com <br />
               password: Student@123
-            </div>
-          </motion.div>
+            </div>{" "}
+            <button
+              onClick={() => {
+                setEmail("student.1@placement.com");
+                setPassword("Student@123");
+              }}
+            >
+              {/* copy icon */}
+              <FaCopy className="text-base" />
+            </button>
+          </div>
+        </motion.div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
@@ -100,7 +126,7 @@ const Login = () => {
             <motion.button
               type="button"
               className={`px-3 py-1 border rounded text-sm flex items-center gap-1 transition
-                ${role=='admin'? 'bg-gray-400':'bg-gray-100'}`}
+                ${role == "admin" ? "bg-gray-400" : "bg-gray-100"}`}
               onClick={() => setRole("admin")}
               whileHover={{ scale: 1.03 }}
               whileTap={{ scale: 0.97 }}
@@ -112,7 +138,7 @@ const Login = () => {
             <motion.button
               type="button"
               className={`px-3 py-1 border rounded text-sm flex items-center gap-1 transition
-                ${role=='student'? 'bg-gray-400':'bg-gray-100'}`}
+                ${role == "student" ? "bg-gray-400" : "bg-gray-100"}`}
               onClick={() => setRole("student")}
               whileHover={{ scale: 1.03 }}
               whileTap={{ scale: 0.97 }}

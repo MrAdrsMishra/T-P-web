@@ -28,6 +28,16 @@ export const practiceAPI = axios.create({
   withCredentials: true,
 });
 
+export const metricsAPI = axios.create({
+  baseURL: `${API_BASE_URL}/v1/metrics`,
+  withCredentials: true,
+});
+
+export const analyticsV1API = axios.create({
+  baseURL: `${API_BASE_URL}/v1/analytics`,
+  withCredentials: true,
+});
+
 /**
  * Utility function to get authorization header
  * @param {string} token - Access token
@@ -227,8 +237,18 @@ export const experienceService = {
 };
 
 /**
+ * METRICS ENDPOINTS
+ */
+export const metricsService = {
+  getMetricTree: (token) => 
+    metricsAPI.get('/', token ? getAuthHeader(token) : {}),
+  
+  getTagDiagnostics: (metricId, token) => 
+    metricsAPI.get(`/${metricId || 'all'}/diagnostics`, getAuthHeader(token)),
+};
+
+/**
  * ANALYTICS/PERFORMANCE ENDPOINTS
- * NOTE: These endpoints are placeholders. Implement in backend when ready.
  */
 export const analyticsService = {
   getStudentStats: (token) => 
@@ -248,6 +268,16 @@ export const analyticsService = {
   
   getPersonalRanking: (token) => 
     studentAPI.get('/ranking', getAuthHeader(token)),
+
+  getMetricLeaderboard: ({ metricId, scopeType = 'GLOBAL', scopeId = 'ALL', rankFrom, rankTo, page = 1, limit = 20 }, token) => {
+    let url = `/rankings?metricId=${metricId}&scopeType=${scopeType}&scopeId=${scopeId}&page=${page}&limit=${limit}`;
+    if (rankFrom) url += `&rankFrom=${rankFrom}`;
+    if (rankTo) url += `&rankTo=${rankTo}`;
+    return analyticsV1API.get(url, token ? getAuthHeader(token) : {});
+  },
+
+  getStudentTreePerformance: (token) =>
+    analyticsV1API.get('/student-tree-performance', getAuthHeader(token)),
 };
 
 /**

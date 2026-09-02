@@ -1,14 +1,14 @@
-import React, { useRef, useState } from "react";
-import { Outlet, useNavigate, NavLink } from "react-router-dom";
-import Sidebar from "./Admin_dashboard_pages/Sidebar";
-import Header from "./Admin_dashboard_pages/Header";
+import React, { useRef, useState, useEffect } from "react";
+import { Outlet } from "react-router-dom";
+import Header from "../../shared/components/Header";
+import Sidebar from "./Sidebar";
 
-function Admin_Dashboard() {
+export default function DashboardLayout({ navigation }) {
   const [openBar, setOpenBar] = useState(false);
   const [rightWidth, setRightWidth] = useState(300); // initial width in px
   const resizerRef = useRef(null);
   const isDragging = useRef(false);
- 
+
   const startDragging = () => {
     isDragging.current = true;
     document.body.classList.add("select-none");
@@ -27,7 +27,7 @@ function Admin_Dashboard() {
     setRightWidth(newWidth);
   };
 
-  React.useEffect(() => {
+  useEffect(() => {
     window.addEventListener("mousemove", onDrag);
     window.addEventListener("mouseup", stopDragging);
     return () => {
@@ -35,11 +35,11 @@ function Admin_Dashboard() {
       window.removeEventListener("mouseup", stopDragging);
     };
   }, []);
+
   const ToggleBar = () => {
-    setOpenBar(!openBar);
+    setOpenBar((prev) => !prev);
   };
 
- 
   return (
     <div className="flex flex-col h-screen overflow-hidden">
       {/* Header (fixed top) */}
@@ -47,7 +47,7 @@ function Admin_Dashboard() {
 
       {/* Main Content Area */}
       <div className="h-full flex justify-between bg-gray-200 overflow-hidden">
-        {/* Sidebar - Responsive */}
+        {/* Sidebar Container - Responsive */}
         <div
           className={`absolute md:relative z-40 md:z-10 h-full md:flex flex-col transition-all duration-300 ${
             openBar ? "left-0" : "-left-full md:left-0"
@@ -55,7 +55,7 @@ function Admin_Dashboard() {
           style={{ width: openBar ? "100%" : rightWidth }}
         >
           <div className="flex-1 overflow-auto">
-            <Sidebar />
+            <Sidebar renderList={navigation} />
           </div>
           {/* Resizer - only visible on larger screens */}
           <div
@@ -73,7 +73,7 @@ function Admin_Dashboard() {
           />
         )}
 
-        {/* Scrollable Outlet */}
+        {/* Scrollable Nested Route Outlet */}
         <main className="flex-1 bg-gray-50 p-2 md:p-4 overflow-auto">
           <Outlet />
         </main>
@@ -81,5 +81,3 @@ function Admin_Dashboard() {
     </div>
   );
 }
-
-export default Admin_Dashboard;
