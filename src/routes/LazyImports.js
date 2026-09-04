@@ -39,4 +39,5 @@ export const TestManagement = lazy(() => import("../pages/logged/Admin-Dashboard
 export const Students = lazy(() => import("../pages/logged/Admin-Dashboard-Pages/Students.jsx"));
 export const Queries = lazy(() => import("../pages/logged/Admin-Dashboard-Pages/Queries.jsx"));
 export const Admin_Profile = lazy(()=> import("../pages/logged/Admin-Dashboard-Pages/Profile.jsx"));
-export const Admin_Setting = lazy(()=> import("../pages/logged/Admin-Dashboard-Pages/Setting.jsx"));
+export const Admin_Setting = lazy(()=> import("../pages/logged/Admin-Dashboard-Pages/Setting.jsx"));
+export const AdminAnalytics = lazy(() => import("../pages/logged/Admin-Dashboard-Pages/AdminAnalytics.jsx"));

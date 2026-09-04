@@ -38,7 +38,8 @@ export const ROUTES = {
     STUDENTS: "manage-students",
     QUERIES: "students-queries",
     ADMIN_PROFILE:"profile",
-    ADMIN_SETTING:"setting"
+    ADMIN_SETTING:"setting",
+    ANALYTICS: "analytics",
   },
 
   TEST: {

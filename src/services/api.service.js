@@ -58,6 +58,14 @@ export const authService = {
   login: (credentials) => authAPI.post('/login', credentials),
   
   logout: (token) => authAPI.post('/logout', {}, getAuthHeader(token)),
+
+  registerAdmin: (credentials) => adminAPI.post('/register-admin', credentials),
+  
+  registerStudent: (studentData, token) => 
+    adminAPI.post('/register-student', studentData, getAuthHeader(token)),
+  
+  deleteStudent: (studentId, token) => 
+    adminAPI.post('/delete-student', { studentId }, getAuthHeader(token)),
   
   updateUserProfile: (data, token) => {
     const formData = new FormData();
@@ -88,14 +96,6 @@ export const authService = {
  * ADMIN ENDPOINTS
  */
 export const adminService = {
-  registerAdmin: (credentials) => adminAPI.post('/register-admin', credentials),
-  
-  registerStudent: (studentData, token) => 
-    adminAPI.post('/register-student', studentData, getAuthHeader(token)),
-  
-  deleteStudent: (studentId, token) => 
-    adminAPI.post('/delete-student', { studentId }, getAuthHeader(token)),
-
   createTest: (testData, token) => 
     adminAPI.post('/create-test', testData, getAuthHeader(token)),
   
@@ -278,6 +278,50 @@ export const analyticsService = {
 
   getStudentTreePerformance: (token) =>
     analyticsV1API.get('/student-tree-performance', getAuthHeader(token)),
+
+  // New Student Analytics Endpoints
+  getStudentSummary: (token) =>
+    analyticsV1API.get('/student/summary', getAuthHeader(token)),
+
+  getSkillsClassification: (token) =>
+    analyticsV1API.get('/student/skills', getAuthHeader(token)),
+
+  getPerformanceTrendsV1: (token) =>
+    analyticsV1API.get('/student/trends', getAuthHeader(token)),
+
+  getCodingAnalytics: (token) =>
+    analyticsV1API.get('/student/coding', getAuthHeader(token)),
+
+  getPlacementReadiness: (token) =>
+    analyticsV1API.get('/student/placement-readiness', getAuthHeader(token)),
+
+  getPeerComparison: (token) =>
+    analyticsV1API.get('/student/comparison', getAuthHeader(token)),
+
+  // New Admin Analytics Endpoints
+  getAdminOverview: (token) =>
+    analyticsV1API.get('/admin/overview', getAuthHeader(token)),
+
+  getAcademicPerformance: (token) =>
+    analyticsV1API.get('/admin/performance', getAuthHeader(token)),
+
+  getTopicHeatmap: (token) =>
+    analyticsV1API.get('/admin/topics', getAuthHeader(token)),
+
+  getQuestionAnalyticsAdmin: (token) =>
+    analyticsV1API.get('/admin/questions', getAuthHeader(token)),
+
+  getAssessmentAnalyticsAdmin: (testId, token) =>
+    analyticsV1API.get(`/admin/assessments${testId ? `?testId=${testId}` : ''}`, getAuthHeader(token)),
+
+  getAtRiskStudents: (token) =>
+    analyticsV1API.get('/admin/students/at-risk', getAuthHeader(token)),
+
+  getImprovementAnalytics: (token) =>
+    analyticsV1API.get('/admin/improvement', getAuthHeader(token)),
+
+  getParticipationAnalytics: (token) =>
+    analyticsV1API.get('/admin/participation', getAuthHeader(token)),
 };
 
 /**

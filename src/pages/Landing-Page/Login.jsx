@@ -18,12 +18,13 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const result = await login({ email, password, role });
-    if (result?.status == 200) {
-      role == "admin"
-        ? navigate("/admin-dashboard/dashboard")
-        : navigate("/student-dashboard/analysis");
-    } else {
-      alert("false");
+    if (result?.status === 200) {
+      const userRole = result?.data?.data?.user?.role?.toLowerCase() || role?.toLowerCase();
+      if (userRole === "admin") {
+        navigate("/admin-dashboard/dashboard");
+      } else {
+        navigate("/student-dashboard/analysis");
+      }
     }
   };
   return (

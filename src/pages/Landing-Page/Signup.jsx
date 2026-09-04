@@ -12,18 +12,24 @@ const Signup = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-const navigate = useNavigate();
+  const navigate = useNavigate();
+  const [localError, setLocalError] = useState("");
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLocalError("");
     // console.log(fullName, email, password, role);
     if (password !== confirmPassword) {
-      return "both passwords must be same";
+      setLocalError("Passwords do not match");
+      return;
     }
     const result = await registerAdmin({ fullName, email, password, role:'admin' });
-    if (result) {
+    if (result?.status==200) {
       navigate("/login"); // This won't work here, use navigation or state
     }
   };
+
+  const displayError = localError || (typeof error === "string" ? error : null);
 
   return (
     <div className="w-full min-h-screen flex justify-center items-center bg-gray-100 p-4">
@@ -44,10 +50,7 @@ const navigate = useNavigate();
             animate={{ opacity: 1, y: 0 }}
           >
             {typeof error === "string"
-              ? error
-              : error?.message
-              ? error.message
-              : "An unexpected error occurred. Please try again."}
+              && "An unexpected error occurred. Please try again."}
           </motion.div>
         )}
 

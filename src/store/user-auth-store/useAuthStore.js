@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import { handleApiError,authService } from "../../services/api.service";
+import { handleApiError, authService } from "../../services/api.service";
 const initialState = {
   user: {
     _id: null,

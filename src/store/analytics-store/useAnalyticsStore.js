@@ -15,31 +15,62 @@ export const useAnalyticsStore = create(
       leaderboardData: { rankings: [], total: 0, page: 1, limit: 20, totalPages: 0 },
       tagDiagnostics: { weakTopics: [], strongTopics: [], averageTopics: [], allTags: [] },
 
-      studentStats: {
-        totalTests: 0,
-        avgScore: 0,
-        bestRank: 0,
-        totalQuestionsAttempted: 0,
+      // Student Analytics State
+      studentSummary: {
+        overallScore: 0,
+        overallRank: 0,
+        percentile: 0,
+        totalAssessments: 0,
+        questionsAttempted: 0,
         accuracy: 0,
+        improvementPercentage: 0,
+        categoryPerformance: {},
       },
-      subjectPerformance: {},
-      performanceTrends: [],
-      accuracyMatrix: {
-        overall: 0,
-        streak: { current: 0, longest: 0 },
-        byDifficulty: { easy: 0, medium: 0, hard: 0 },
+      skillsClassification: {
+        weakSkills: [],
+        averageSkills: [],
+        strongSkills: [],
       },
-      consistencyMetrics: {
-        practiceFrequency: 0,
-        engagementScore: 0,
-        consistency: 'N/A',
+      placementReadiness: {
+        readinessScore: 0,
+        profileName: '',
+        breakdown: [],
       },
-      leaderboard: [],
-      personalRanking: {
-        globalRank: 0,
-        subjectRanks: {},
-        tierRank: 0,
+      peerComparison: {
+        myScore: 0,
+        branchAvg: 0,
+        batchAvg: 0,
+        streamAvg: 0,
+        courseAvg: 0,
+        topScore: 100,
       },
+      codingAnalytics: {
+        problemsSolved: 0,
+        accuracy: 0,
+        languagePerformance: {},
+        topicPerformance: {},
+      },
+
+      // Admin Analytics State
+      adminOverview: {
+        totalStudents: 0,
+        activeStudents: 0,
+        totalAssessments: 0,
+        completedAssessments: 0,
+        questionsAttempted: 0,
+        averageScore: 0,
+        averageAccuracy: 0,
+        participationRate: 0,
+      },
+      academicPerformance: {
+        coursePerformance: {},
+        streamPerformance: {},
+        branchPerformance: {},
+        batchPerformance: {},
+      },
+      topicHeatmap: [],
+      atRiskStudents: [],
+
       isLoading: false,
       error: null,
       lastUpdated: null,
@@ -104,14 +135,14 @@ export const useAnalyticsStore = create(
         }
       },
 
-      // Fetch tag diagnostics (weak/strong micro-topics)
-      fetchTagDiagnostics: async (metricId, token) => {
+      // Fetch student summary
+      fetchStudentSummary: async (token) => {
         set({ isLoading: true, error: null });
         try {
-          const response = await metricsService.getTagDiagnostics(metricId, token);
-          const data = response.data?.data || { weakTopics: [], strongTopics: [], averageTopics: [], allTags: [] };
+          const response = await analyticsService.getStudentSummary(token);
+          const data = response.data?.data || {};
           set({
-            tagDiagnostics: data,
+            studentSummary: data,
             isLoading: false,
             lastUpdated: new Date(),
           });
@@ -123,17 +154,18 @@ export const useAnalyticsStore = create(
         }
       },
 
-      // Fetch student stats
-      fetchStudentStats: async (token) => {
+      // Fetch skills classification
+      fetchSkillsClassification: async (token) => {
         set({ isLoading: true, error: null });
         try {
-          const response = await analyticsService.getStudentStats(token);
+          const response = await analyticsService.getSkillsClassification(token);
+          const data = response.data?.data || { weakSkills: [], averageSkills: [], strongSkills: [] };
           set({
-            studentStats: response.data.data || {},
+            skillsClassification: data,
             isLoading: false,
             lastUpdated: new Date(),
           });
-          return response;
+          return data;
         } catch (error) {
           const { message } = handleApiError(error);
           set({ error: message, isLoading: false });
@@ -141,17 +173,18 @@ export const useAnalyticsStore = create(
         }
       },
 
-      // Fetch subject-wise performance
-      fetchSubjectPerformance: async (token) => {
+      // Fetch placement readiness
+      fetchPlacementReadiness: async (token) => {
         set({ isLoading: true, error: null });
         try {
-          const response = await analyticsService.getSubjectPerformance(token);
+          const response = await analyticsService.getPlacementReadiness(token);
+          const data = response.data?.data || { readinessScore: 0, breakdown: [] };
           set({
-            subjectPerformance: response.data.data || {},
+            placementReadiness: data,
             isLoading: false,
             lastUpdated: new Date(),
           });
-          return response;
+          return data;
         } catch (error) {
           const { message } = handleApiError(error);
           set({ error: message, isLoading: false });
@@ -159,17 +192,18 @@ export const useAnalyticsStore = create(
         }
       },
 
-      // Fetch performance trends
-      fetchPerformanceTrends: async (token) => {
+      // Fetch peer comparison
+      fetchPeerComparison: async (token) => {
         set({ isLoading: true, error: null });
         try {
-          const response = await analyticsService.getPerformanceTrends(token);
+          const response = await analyticsService.getPeerComparison(token);
+          const data = response.data?.data || { myScore: 0, branchAvg: 0, batchAvg: 0, streamAvg: 0, courseAvg: 0, topScore: 100 };
           set({
-            performanceTrends: response.data.data || [],
+            peerComparison: data,
             isLoading: false,
             lastUpdated: new Date(),
           });
-          return response;
+          return data;
         } catch (error) {
           const { message } = handleApiError(error);
           set({ error: message, isLoading: false });
@@ -177,17 +211,18 @@ export const useAnalyticsStore = create(
         }
       },
 
-      // Fetch accuracy matrix
-      fetchAccuracyMatrix: async (token) => {
+      // Fetch coding analytics
+      fetchCodingAnalytics: async (token) => {
         set({ isLoading: true, error: null });
         try {
-          const response = await analyticsService.getAccuracyMatrix(token);
+          const response = await analyticsService.getCodingAnalytics(token);
+          const data = response.data?.data || { problemsSolved: 0, accuracy: 0, languagePerformance: {}, topicPerformance: {} };
           set({
-            accuracyMatrix: response.data.data || {},
+            codingAnalytics: data,
             isLoading: false,
             lastUpdated: new Date(),
           });
-          return response;
+          return data;
         } catch (error) {
           const { message } = handleApiError(error);
           set({ error: message, isLoading: false });
@@ -195,17 +230,18 @@ export const useAnalyticsStore = create(
         }
       },
 
-      // Fetch consistency metrics
-      fetchConsistencyMetrics: async (token) => {
+      // Admin: Fetch Overview
+      fetchAdminOverview: async (token) => {
         set({ isLoading: true, error: null });
         try {
-          const response = await analyticsService.getConsistencyMetrics(token);
+          const response = await analyticsService.getAdminOverview(token);
+          const data = response.data?.data || {};
           set({
-            consistencyMetrics: response.data.data || {},
+            adminOverview: data,
             isLoading: false,
             lastUpdated: new Date(),
           });
-          return response;
+          return data;
         } catch (error) {
           const { message } = handleApiError(error);
           set({ error: message, isLoading: false });
@@ -213,17 +249,18 @@ export const useAnalyticsStore = create(
         }
       },
 
-      // Fetch leaderboard
-      fetchLeaderboard: async (token) => {
+      // Admin: Fetch Academic Performance
+      fetchAcademicPerformance: async (token) => {
         set({ isLoading: true, error: null });
         try {
-          const response = await analyticsService.getLeaderboard(token);
+          const response = await analyticsService.getAcademicPerformance(token);
+          const data = response.data?.data || {};
           set({
-            leaderboard: response.data.data || [],
+            academicPerformance: data,
             isLoading: false,
             lastUpdated: new Date(),
           });
-          return response;
+          return data;
         } catch (error) {
           const { message } = handleApiError(error);
           set({ error: message, isLoading: false });
@@ -231,17 +268,18 @@ export const useAnalyticsStore = create(
         }
       },
 
-      // Fetch personal ranking
-      fetchPersonalRanking: async (token) => {
+      // Admin: Fetch Topic Heatmap
+      fetchTopicHeatmap: async (token) => {
         set({ isLoading: true, error: null });
         try {
-          const response = await analyticsService.getPersonalRanking(token);
+          const response = await analyticsService.getTopicHeatmap(token);
+          const data = response.data?.data?.heatmap || [];
           set({
-            personalRanking: response.data.data || {},
+            topicHeatmap: data,
             isLoading: false,
             lastUpdated: new Date(),
           });
-          return response;
+          return data;
         } catch (error) {
           const { message } = handleApiError(error);
           set({ error: message, isLoading: false });
@@ -249,14 +287,37 @@ export const useAnalyticsStore = create(
         }
       },
 
-      // Fetch all analytics at once
+      // Admin: Fetch At-Risk Students
+      fetchAtRiskStudents: async (token) => {
+        set({ isLoading: true, error: null });
+        try {
+          const response = await analyticsService.getAtRiskStudents(token);
+          const data = response.data?.data?.atRiskStudents || [];
+          set({
+            atRiskStudents: data,
+            isLoading: false,
+            lastUpdated: new Date(),
+          });
+          return data;
+        } catch (error) {
+          const { message } = handleApiError(error);
+          set({ error: message, isLoading: false });
+          return null;
+        }
+      },
+
+      // Fetch all student analytics at once
       fetchAllAnalytics: async (token) => {
         set({ isLoading: true, error: null });
         try {
           await Promise.all([
+            get().fetchStudentSummary(token),
+            get().fetchSkillsClassification(token),
+            get().fetchPlacementReadiness(token),
+            get().fetchPeerComparison(token),
+            get().fetchCodingAnalytics(token),
             get().fetchMetricTree(token),
             get().fetchHierarchicalPerformance(token),
-            get().fetchTagDiagnostics(null, token),
           ]);
           set({ isLoading: false, lastUpdated: new Date() });
         } catch (error) {
